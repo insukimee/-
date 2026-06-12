@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <!-- Korean Pages -->
+  <url>
+    <loc>https://marketinsight.com/ko/index.html</loc>
+    <lastmod>2026-06-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://marketinsight.com/ko/index.html"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://marketinsight.com/ja/index.html"/>
+  </url>
+  <url>
+    <loc>https://marketinsight.com/ko/stock-analysis.html</loc>
+    <lastmod>2026-06-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://marketinsight.com/ko/stock-analysis.html"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://marketinsight.com/ja/stock-analysis.html"/>
+  </url>
+  <url>
+    <loc>https://marketinsight.com/ko/company-analysis.html</loc>
+    <lastmod>2026-06-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://marketinsight.com/ko/company-analysis.html"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://marketinsight.com/ja/company-analysis.html"/>
+  </url>
+  <url>
+    <loc>https://marketinsight.com/ko/economy-trends.html</loc>
+    <lastmod>2026-06-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://marketinsight.com/ko/economy-trends.html"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://marketinsight.com/ja/economy-trends.html"/>
+  </url>
+  <!-- Korean Stock Analysis Posts -->
+  <url>
+    <loc>https://marketinsight.com/ko/post-samsung-electronics.html</loc>
+    <lastmod>2026-06-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://marketinsight.com/ko/post-samsung-electronics.html"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://marketinsight.com/ja/post-toyota-motor.html"/>
+  </url>
+  <url>
+    <loc>https://marketinsight.com/ko/post-ai-semiconductor.html</loc>
+    <lastmod>2026-06-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://marketinsight.com/ko/post-ai-semiconductor.html"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://marketinsight.com/ja/post-ai-semiconductor.html"/>
+  </url>
+  <url>
+    <loc>https://marketinsight.com/ko/post-kospi-scenario.html</loc>
+    <lastmod>2026-06-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://marketinsight.com/ko/post-kospi-scenario.html"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://marketinsight.com/ja/post-nikkei-scenario.html"/>
+  </url>
+  <url>
+    <loc>https://marketinsight.com/ko/post-dividend-portfolio.html</loc>
+    <lastmod>2026-06-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://marketinsight.com/ko/post-dividend-portfolio.html"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://marketinsight.com/ja/post-dividend-portfolio.html"/>
+  </url>
+  <!-- Japanese Pages -->
+  <url>
+    <loc>https://marketinsight.com/ja/index.html</loc>
+    <lastmod>2026-06-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://marketinsight.com/ko/index.html"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://marketinsight.com/ja/index.html"/>
+  </url>
+  <url>
+    <loc>https://marketinsight.com/ja/stock-analysis.html</loc>
+    <lastmod>2026-06-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://marketinsight.com/ko/stock-analysis.html"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://marketinsight.com/ja/stock-analysis.html"/>
+  </url>
+  <url>
+    <loc>https://marketinsight.com/ja/company-analysis.html</loc>
+    <lastmod>2026-06-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://marketinsight.com/ko/company-analysis.html"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://marketinsight.com/ja/company-analysis.html"/>
+  </url>
+  <url>
+    <loc>https://marketinsight.com/ja/economy-trends.html</loc>
+    <lastmod>2026-06-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://marketinsight.com/ko/economy-trends.html"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://marketinsight.com/ja/economy-trends.html"/>
+  </url>
+  <!-- Japanese Stock Analysis Posts -->
+  <url>
+    <loc>https://marketinsight.com/ja/post-toyota-motor.html</loc>
+    <lastmod>2026-06-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://marketinsight.com/ko/post-samsung-electronics.html"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://marketinsight.com/ja/post-toyota-motor.html"/>
+  </url>
+  <url>
+    <loc>https://marketinsight.com/ja/post-ai-semiconductor.html</loc>
+    <lastmod>2026-06-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://marketinsight.com/ko/post-ai-semiconductor.html"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://marketinsight.com/ja/post-ai-semiconductor.html"/>
+  </url>
+  <url>
+    <loc>https://marketinsight.com/ja/post-nikkei-scenario.html</loc>
+    <lastmod>2026-06-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://marketinsight.com/ko/post-kospi-scenario.html"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://marketinsight.com/ja/post-nikkei-scenario.html"/>
+  </url>
+  <url>
+    <loc>https://marketinsight.com/ja/post-dividend-portfolio.html</loc>
+    <lastmod>2026-06-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://marketinsight.com/ko/post-dividend-portfolio.html"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://marketinsight.com/ja/post-dividend-portfolio.html"/>
+  </url>
+</urlset>
