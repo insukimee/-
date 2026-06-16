@@ -21,15 +21,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # enablement: true makes the workflow provision the Pages site itself.
-      # This works automatically once the repository is PUBLIC (no manual
-      # Settings -> Pages step needed). On a private repo with a Free plan
-      # GitHub Pages is unavailable, so this step will fail until the repo is
-      # made public or the account is on Pro/Team.
+      # NOTE: Enable Pages once in the GitHub UI before the first deploy:
+      #   Settings -> Pages -> Build and deployment -> Source: "GitHub Actions"
+      # The Actions token cannot create the Pages site automatically on this
+      # repo, so the site must be initialized there once. After that this step
+      # just resolves the existing site and the deploy succeeds.
       - name: Setup Pages
         uses: actions/configure-pages@v5
-        with:
-          enablement: true
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
