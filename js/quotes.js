@@ -2,12 +2,12 @@
   'use strict';
 
   // ============================ CONFIG ============================
-  // KEY-LESS by default: quotes are fetched from Yahoo Finance, with
-  // public CORS proxies as automatic fallbacks when the browser blocks
-  // the direct request. No API key required.
+  // KEY-LESS by default: quotes come from Yahoo Finance, routed through
+  // public CORS proxies (no API key needed). Public proxies can be slow
+  // or briefly unavailable; the script tries several in order.
   //
-  // (Optional) For a dedicated key-based source, paste a free Finnhub
-  // key here; if set, it takes priority. Leave empty to stay key-less.
+  // (Optional) Paste a free Finnhub key (https://finnhub.io) to use a
+  // dedicated key-based source instead. Leave empty to stay key-less.
   var FINNHUB_KEY = "";
   // ===============================================================
 
@@ -42,32 +42,50 @@
     }
   }
 
+  function fetchText(url, ms) {
+    var ctrl = ('AbortController' in window) ? new AbortController() : null;
+    var t = ctrl ? setTimeout(function () { ctrl.abort(); }, ms || 7000) : null;
+    var opts = ctrl ? { signal: ctrl.signal } : {};
+    return fetch(url, opts).then(function (r) {
+      if (t) clearTimeout(t);
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.text();
+    }, function (e) { if (t) clearTimeout(t); throw e; });
+  }
+
   // ---- key-based (optional) ----
   function viaFinnhub(sym, el) {
     var url = 'https://finnhub.io/api/v1/quote?symbol=' +
       encodeURIComponent(sym) + '&token=' + FINNHUB_KEY;
-    return fetch(url).then(function (r) { return r.json(); }).then(function (d) {
+    return fetchText(url).then(function (txt) {
+      var d = JSON.parse(txt);
       if (d && typeof d.c === 'number' && d.c > 0) { paint(el, d.c, d.d, d.dp); return true; }
       return false;
     });
   }
 
-  // ---- key-less (default): Yahoo, with CORS-proxy fallbacks ----
+  // ---- key-less (default): Yahoo via CORS proxies ----
   function yahooUrl(sym) {
-    // Yahoo uses a dash for class shares (e.g. MOG-A).
     return 'https://query1.finance.yahoo.com/v8/finance/chart/' +
       encodeURIComponent(sym.replace('.', '-')) + '?interval=1d&range=1d';
   }
 
-  function candidates(url) {
+  // Each candidate returns the raw Yahoo JSON text. `wrap` means the
+  // proxy returns {contents:"<json>"} that we must unwrap.
+  function candidates(u) {
+    var e = encodeURIComponent(u);
     return [
-      url,
-      'https://corsproxy.io/?url=' + encodeURIComponent(url),
-      'https://api.allorigins.win/raw?url=' + encodeURIComponent(url)
+      { url: 'https://api.codetabs.com/v1/proxy/?quest=' + e, wrap: false },
+      { url: 'https://api.allorigins.win/raw?url=' + e, wrap: false },
+      { url: 'https://api.allorigins.win/get?url=' + e, wrap: true },
+      { url: 'https://thingproxy.freeboard.io/fetch/' + u, wrap: false },
+      { url: u, wrap: false } // direct (works only if CORS allowed)
     ];
   }
 
-  function parseYahoo(d, el) {
+  function parseYahoo(text, wrap, el) {
+    var d = JSON.parse(text);
+    if (wrap) d = JSON.parse(d.contents);
     var res = d && d.chart && d.chart.result && d.chart.result[0];
     var m = res && res.meta;
     if (!m || m.regularMarketPrice === undefined) return false;
@@ -80,13 +98,16 @@
   }
 
   function viaYahoo(sym, el) {
-    var urls = candidates(yahooUrl(sym));
+    var list = candidates(yahooUrl(sym));
     var i = 0;
     function attempt() {
-      if (i >= urls.length) return Promise.resolve(false);
-      return fetch(urls[i++])
-        .then(function (r) { return r.json(); })
-        .then(function (d) { return parseYahoo(d, el) || attempt(); })
+      if (i >= list.length) return Promise.resolve(false);
+      var c = list[i++];
+      return fetchText(c.url)
+        .then(function (txt) {
+          try { return parseYahoo(txt, c.wrap, el) || attempt(); }
+          catch (e) { return attempt(); }
+        })
         .catch(function () { return attempt(); });
     }
     return attempt();
