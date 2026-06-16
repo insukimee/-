@@ -34,13 +34,23 @@
       <div class="post-header">
         <span class="post-tag">銘柄分析 · AMZN</span>
         <h1>アマゾン (AMZN) 詳細分析</h1>
-        <div class="quote-box" data-quote="AMZN">
-          <span class="quote-price">—</span>
-          <span class="quote-change"></span>
-        </div>
-        <div class="quote-note">リアルタイム株価は外部データに基づき、遅延する場合がある参考値です。</div>
         <div class="post-meta">作成日: 2026.06.11 · 取引所: NASDAQ · セクター: AI・ソフトウェア · 作成者: マーケットインサイト・リサーチチーム</div>
       </div>
+        <div class="tv-block">
+          <div class="tradingview-widget-container">
+            <div class="tradingview-widget-container__widget"></div>
+            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-symbol-info.js" async>
+            {"symbol": "NASDAQ:AMZN", "width": "100%", "locale": "ja", "colorTheme": "dark", "isTransparent": true}
+            </script>
+          </div>
+          <div class="tradingview-widget-container tv-chart">
+            <div class="tradingview-widget-container__widget"></div>
+            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
+            {"symbol": "NASDAQ:AMZN", "width": "100%", "height": 380, "locale": "ja", "colorTheme": "dark", "theme": "dark", "style": "1", "interval": "D", "hide_side_toolbar": true, "allow_symbol_change": false, "save_image": false}
+            </script>
+          </div>
+        </div>
+      <div class="quote-note">リアルタイム株価・チャートはTradingView提供で、遅延する場合があります。</div>
       <div class="post-body">
         <p>クラウド（AWS）とEコマース・広告を網羅するアマゾン（AMZN）を分析します。</p>
         <h2>1. 事業概要</h2>
@@ -87,6 +97,5 @@
     </div>
   </div>
   <script src="../js/main.js"></script>
-  <script src="../js/quotes.js"></script>
 </body>
 </html>
