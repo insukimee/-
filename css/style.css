@@ -435,6 +435,34 @@ main {
   margin-top: var(--space-sm);
 }
 
+/* Live quote widget */
+.quote-box {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-top: var(--space-md);
+}
+.quote-price {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: var(--text-primary);
+}
+.quote-change {
+  font-size: 13px;
+  font-weight: 700;
+}
+.quote-note {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+.q-up { color: var(--color-up); }
+.q-down { color: var(--color-down); }
+.card-quote { font-weight: 700; color: var(--text-secondary); }
+.card-quote.q-up { color: var(--color-up); }
+.card-quote.q-down { color: var(--color-down); }
+
 .post-body h2 {
   font-size: 18px;
   font-weight: 700;
