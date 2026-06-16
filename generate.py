@@ -75,6 +75,54 @@ SECTORS = {
 }
 SECTOR_ORDER = ["semi", "ai", "infra", "cyber", "space", "energy", "ev", "fintech", "gaming"]
 
+# TradingView symbols (exchange-qualified for reliable resolution).
+TV_SYMBOL = {
+    "NVDA": "NASDAQ:NVDA", "TSM": "NYSE:TSM", "GOOGL": "NASDAQ:GOOGL",
+    "AAPL": "NASDAQ:AAPL", "AMZN": "NASDAQ:AMZN", "ORCL": "NYSE:ORCL",
+    "PLTR": "NASDAQ:PLTR", "IONQ": "NYSE:IONQ", "IBM": "NYSE:IBM",
+    "CSCO": "NASDAQ:CSCO", "DELL": "NYSE:DELL", "CIBR": "NASDAQ:CIBR",
+    "SPCX": "SPCX", "RDW": "NYSE:RDW", "BWXT": "NYSE:BWXT", "TDY": "NYSE:TDY",
+    "MOG.A": "NYSE:MOG.A", "FSLR": "NASDAQ:FSLR", "BE": "NYSE:BE",
+    "VRT": "NYSE:VRT", "TSLA": "NASDAQ:TSLA", "HOOD": "NASDAQ:HOOD",
+    "TTWO": "NASDAQ:TTWO",
+}
+TV_LOCALE = {"ko": "kr", "ja": "ja"}
+
+
+def tv(sym):
+    return TV_SYMBOL.get(sym, sym)
+
+
+def tv_widgets(tvsym, locale):
+    """Symbol info (price/change) + advanced chart for a ticker page."""
+    return f"""        <div class="tv-block">
+          <div class="tradingview-widget-container">
+            <div class="tradingview-widget-container__widget"></div>
+            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-symbol-info.js" async>
+            {{"symbol": "{tvsym}", "width": "100%", "locale": "{locale}", "colorTheme": "dark", "isTransparent": true}}
+            </script>
+          </div>
+          <div class="tradingview-widget-container tv-chart">
+            <div class="tradingview-widget-container__widget"></div>
+            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
+            {{"symbol": "{tvsym}", "width": "100%", "height": 380, "locale": "{locale}", "colorTheme": "dark", "theme": "dark", "style": "1", "interval": "D", "hide_side_toolbar": true, "allow_symbol_change": false, "save_image": false}}
+            </script>
+          </div>
+        </div>"""
+
+
+def tv_tape(locale):
+    """Scrolling live price strip with all tickers, for hub/home top."""
+    syms = ", ".join(
+        '{"proName": "%s", "title": "%s"}' % (tv(t["sym"]), t["sym"]) for t in TICKERS
+    )
+    return f"""    <div class="tradingview-widget-container tv-tape">
+      <div class="tradingview-widget-container__widget"></div>
+      <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+      {{"symbols": [{syms}], "showSymbolLogo": true, "colorTheme": "dark", "isTransparent": true, "displayMode": "adaptive", "locale": "{locale}"}}
+      </script>
+    </div>"""
+
 
 def head(lang, title, desc, slug, other_slug):
     other = OTHER[lang]
@@ -146,7 +194,6 @@ def footer(lang):
     </div>
   </div>
   <script src="../js/main.js"></script>
-  <script src="../js/quotes.js"></script>
 </body>
 </html>
 """
@@ -521,13 +568,10 @@ def render_post(t, lang):
       <div class="post-header">
         <span class="post-tag">{TAG[lang]} · {t['sym']}</span>
         <h1>{name} ({t['sym']}) {title_word}</h1>
-        <div class="quote-box" data-quote="{t['sym']}">
-          <span class="quote-price">—</span>
-          <span class="quote-change"></span>
-        </div>
-        <div class="quote-note">{('실시간 시세는 외부 데이터 기준이며 지연될 수 있는 참고용입니다.' if lang=='ko' else 'リアルタイム株価は外部データに基づき、遅延する場合がある参考値です。')}</div>
         <div class="post-meta">{('작성일' if lang=='ko' else '作成日')}: {t['date']} · {meta}</div>
       </div>
+{tv_widgets(tv(t['sym']), TV_LOCALE[lang])}
+      <div class="quote-note">{('실시간 시세·차트는 TradingView 제공이며 지연될 수 있습니다.' if lang=='ko' else 'リアルタイム株価・チャートはTradingView提供で、遅延する場合があります。')}</div>
       <div class="post-body">
         <p>{lead}</p>
 {body_html}
@@ -549,7 +593,7 @@ def ticker_card(t, lang):
             <span class="article-tag">{sector} · {t['sym']}</span>
             <h3>{name} ({t['sym']})</h3>
             <p>{short}</p>
-            <div class="article-meta">{t['date']} · <span class="card-quote" data-quote="{t['sym']}">—</span></div>
+            <div class="article-meta">{t['date']}</div>
           </div>
         </a>"""
 
@@ -583,6 +627,7 @@ def render_hub(lang):
       <h1>{banner_h}</h1>
       <p>{banner_p}</p>
     </div>
+{tv_tape(TV_LOCALE[lang])}
     <div class="container">
 {groups}    </div>
   </main>
@@ -612,6 +657,7 @@ def render_index(lang):
       <h1>{hero_h}</h1>
       <p>{hero_p}</p>
     </section>
+{tv_tape(TV_LOCALE[lang])}
     <div class="section-divider"></div>
     <div class="section-header">
       <h2>{sec_h}</h2>

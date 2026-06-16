@@ -463,6 +463,18 @@ main {
 .card-quote.q-up { color: var(--color-up); }
 .card-quote.q-down { color: var(--color-down); }
 
+/* TradingView embeds */
+.tv-block { margin-top: var(--space-md); }
+.tv-chart { height: 400px; margin-top: var(--space-md); }
+.tv-chart .tradingview-widget-container__widget { height: 100%; width: 100%; }
+.tv-tape { margin: 0 0 var(--space-sm); }
+.tradingview-widget-copyright {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-align: right;
+}
+.tradingview-widget-copyright a { color: var(--text-secondary); }
+
 .post-body h2 {
   font-size: 18px;
   font-weight: 700;
