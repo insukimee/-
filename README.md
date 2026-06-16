@@ -1,66 +1,66 @@
 # 마켓인사이트 (MarketInsight)
 
-주식·기업·경제 흐름을 분석하는 한국어/일본어 금융 인사이트 정적 웹사이트입니다.
+미국 증시 핵심 종목과 미국 경제 흐름을 분석하는 한국어/일본어 금융 인사이트 정적 웹사이트입니다.
 
 ## 구성
 
 ```
 .
 ├── index.html              # 루트 → ko/index.html 리다이렉트
-├── sitemap.xml             # hreflang alternate 포함 사이트맵
+├── sitemap.xml             # hreflang alternate 포함 사이트맵 (생성됨)
+├── generate.py             # 전체 페이지 생성 스크립트 (티커 데이터 + 템플릿)
 ├── css/style.css           # 다크 테마 반응형 디자인 시스템
 ├── js/main.js              # 햄버거 내비, 쿠키 배너, 스크롤 애니메이션
-├── ko/                     # 한국어 버전
-│   ├── index.html
-│   ├── stock-analysis.html / company-analysis.html / economy-trends.html
-│   ├── post-samsung-electronics.html / post-ai-semiconductor.html
-│   ├── post-kospi-scenario.html / post-dividend-portfolio.html
-│   ├── about.html / contact.html / privacy-policy.html / terms.html
-└── ja/                     # 일본어 버전 (동일 구조)
-    ├── post-toyota-motor.html / post-ai-semiconductor.html
-    └── post-nikkei-scenario.html / post-dividend-portfolio.html
+├── ko/                     # 한국어 버전 (생성됨)
+│   ├── index.html / stock-analysis.html / economy-trends.html
+│   ├── post-<ticker>.html  # 종목별 분석 페이지 23개
+│   └── about.html / contact.html / privacy-policy.html / terms.html
+└── ja/                     # 일본어 버전 (동일 구조, 생성됨)
 ```
 
-각 글은 헤더의 `🌐 KR/JP` 버튼과 `hreflang` 메타로 다른 언어 버전과 상호 링크됩니다.
+각 페이지는 헤더의 `🌐 KR/JP` 버튼과 `hreflang` 메타로 다른 언어 버전과 상호 링크됩니다.
+
+## 다루는 종목 (23종)
+
+`stock-analysis.html` 허브에서 섹터별로 묶어 보여줍니다.
+
+| 섹터 | 티커 |
+|------|------|
+| 반도체 | NVDA, TSM |
+| AI·소프트웨어 | GOOGL, AAPL, AMZN, ORCL, PLTR, IONQ |
+| IT인프라·하드웨어 | IBM, CSCO, DELL |
+| 사이버보안 | CIBR (ETF) |
+| 우주·방산 | SPCX(SpaceX, 비상장), RDW, BWXT, TDY, MOG.A |
+| 클린에너지·전력 | FSLR, BE, VRT |
+| 전기차 | TSLA |
+| 핀테크 | HOOD |
+| 게임 | TTWO |
+
+> SPCX(스페이스X)는 비상장 기업이라 일반 주식으로 거래되지 않으며, 비상장/프리IPO 관점으로 분석합니다.
+
+## 페이지 생성
+
+콘텐츠/티커를 수정하려면 `generate.py`의 데이터를 고친 뒤 다시 실행합니다.
+
+```bash
+python3 generate.py   # ko/ ja/ 의 모든 HTML과 sitemap.xml 재생성
+```
 
 ## 로컬 실행
-
-정적 사이트라 빌드가 필요 없습니다. 아무 정적 서버로 열면 됩니다.
 
 ```bash
 python3 -m http.server 8000
 # http://localhost:8000/ 접속 (→ ko/index.html 로 이동)
 ```
 
-## 배포 (GitHub Pages)
+## 배포
 
-`main` 브랜치에 푸시하면 `.github/workflows/deploy.yml` 워크플로가 자동으로
-GitHub Pages에 배포합니다.
+`main` 브랜치에 푸시하면 `.github/workflows/deploy.yml` 이 GitHub Pages로 자동 배포합니다.
+(저장소 Settings → Pages → Source: GitHub Actions 가 설정되어 있어야 함)
 
-### ⚠️ 배포 전 필수 단계 (한 번만)
-
-GitHub Pages는 **public 저장소**에서만 무료로 동작합니다. 현재 저장소가
-**private** 이면 배포가 `Resource not accessible by integration` 오류로 실패합니다.
-
-다음 중 하나를 진행하세요.
-
-1. **저장소를 public 으로 전환 (권장·무료)**
-   - `Settings → General → Danger Zone → Change repository visibility → Public`
-   - 전환 후 다음 푸시(또는 `Actions` 탭에서 Re-run)부터 워크플로가
-     Pages 사이트를 **자동 생성·배포**합니다. (추가 수동 설정 불필요)
-
-2. **private 유지 + GitHub Pro/Team 플랜**
-   - Pro/Team 이상이면 private 저장소에서도 Pages 사용 가능
-   - 이후 동일하게 푸시/재실행하면 배포됩니다.
-
-### 배포 후 주소
-
-```
-https://insukimee.github.io/-/
-```
-
-(루트 접속 시 `ko/index.html` 로 자동 이동)
+라이브 주소: `https://insukimee.github.io/-/`
 
 ## 면책
 
-본 사이트의 콘텐츠는 정보 제공 목적이며 투자 권유가 아닙니다.
+본 사이트의 콘텐츠는 정보 제공 목적이며 투자 권유가 아닙니다. 실시간 시세가 아닌 정성적 분석이며,
+투자 판단의 최종 책임은 투자자 본인에게 있습니다.

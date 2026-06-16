@@ -264,6 +264,15 @@ main {
   padding: var(--space-md) 0;
 }
 
+.sector-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--accent-gold);
+  margin: var(--space-lg) 0 var(--space-xs);
+  padding-bottom: var(--space-xs);
+  border-bottom: 1px solid var(--border-color);
+}
+
 .article-card {
   display: block;
   background: var(--bg-card);
