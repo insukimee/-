@@ -463,6 +463,10 @@ main {
 .card-quote.q-up { color: var(--color-up); }
 .card-quote.q-down { color: var(--color-down); }
 
+/* AdSense in-article spacing */
+.ad-inarticle { margin: var(--space-lg) 0; }
+.ad-container .adsbygoogle { display: block; }
+
 /* TradingView embeds */
 .tv-block { margin-top: var(--space-md); }
 .tv-chart { height: 400px; margin-top: var(--space-md); }

@@ -4,6 +4,14 @@ import os
 
 SITE = "https://insukimee.github.io/-"
 
+# ---------------------------------------------------------------- AdSense config
+# TODO(owner): replace with your real AdSense publisher ID (keep the "ca-" prefix).
+ADSENSE_CLIENT = "ca-pub-XXXXXXXXXXXXXXXX"
+# TODO(owner): after approval, create ad units and paste their slot IDs here.
+AD_SLOT_DISPLAY = "1234567890"      # responsive display unit (lists, page bottom)
+AD_SLOT_INARTICLE = "0987654321"    # in-article fluid unit (inside posts)
+AD_LABEL = {"ko": "광고", "ja": "広告"}
+
 # ---------------------------------------------------------------- nav config
 NAV = {
     "ko": [
@@ -126,6 +134,7 @@ def tv_tape(locale):
 
 def head(lang, title, desc, slug, other_slug):
     other = OTHER[lang]
+    canonical = f"{SITE}/{lang}/{slug}"
     return f"""<!DOCTYPE html>
 <html lang="{lang}">
 <head>
@@ -133,12 +142,18 @@ def head(lang, title, desc, slug, other_slug):
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
   <title>{title}</title>
   <meta name="description" content="{desc}">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <meta name="google-adsense-account" content="{ADSENSE_CLIENT}">
   <meta property="og:title" content="{title}">
   <meta property="og:description" content="{desc}">
   <meta property="og:type" content="website">
+  <meta property="og:site_name" content="{LOGO[lang]}">
+  <meta property="og:url" content="{canonical}">
+  <link rel="canonical" href="{canonical}">
   <link rel="alternate" hreflang="{lang}" href="{slug}">
   <link rel="alternate" hreflang="{other}" href="../{other}/{other_slug}">
   <link rel="stylesheet" href="../css/style.css">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={ADSENSE_CLIENT}" crossorigin="anonymous"></script>
 </head>"""
 
 
@@ -199,11 +214,32 @@ def footer(lang):
 """
 
 
-def ad():
-    return """      <div class="ad-container">
-        <div class="ad-label">Advertisement</div>
-        <div class="ad-placeholder">Ad Space</div>
+def ad(lang="ko"):
+    """Responsive display ad unit (lists, page bottom)."""
+    return f"""      <div class="ad-container">
+        <div class="ad-label">{AD_LABEL[lang]}</div>
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="{ADSENSE_CLIENT}"
+             data-ad-slot="{AD_SLOT_DISPLAY}"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+        <script>(adsbygoogle = window.adsbygoogle || []).push({{}});</script>
       </div>"""
+
+
+def ad_inarticle(lang="ko"):
+    """In-article fluid ad unit (placed within post body)."""
+    return f"""        <div class="ad-container ad-inarticle">
+          <div class="ad-label">{AD_LABEL[lang]}</div>
+          <ins class="adsbygoogle"
+               style="display:block; text-align:center;"
+               data-ad-layout="in-article"
+               data-ad-format="fluid"
+               data-ad-client="{ADSENSE_CLIENT}"
+               data-ad-slot="{AD_SLOT_INARTICLE}"></ins>
+          <script>(adsbygoogle = window.adsbygoogle || []).push({{}});</script>
+        </div>"""
 
 
 # ---------------------------------------------------------------- ticker data
@@ -555,6 +591,8 @@ def render_post(t, lang):
     for i, (bko, bja) in enumerate(t["bodies"]):
         body = bko if lang == "ko" else bja
         body_parts.append(f"        <h2>{i+1}. {titles[i]}</h2>\n        <p>{body}</p>")
+        if i == 1:  # in-article ad after the 2nd section
+            body_parts.append(ad_inarticle(lang))
     body_html = "\n".join(body_parts)
     exch_lbl = "거래소" if lang == "ko" else "取引所"
     sector_lbl = "섹터" if lang == "ko" else "セクター"
@@ -576,7 +614,7 @@ def render_post(t, lang):
         <p>{lead}</p>
 {body_html}
       </div>
-{ad()}
+{ad(lang)}
       <a href="stock-analysis.html" class="back-btn">{BACK[lang]}</a>
     </article>
   </main>
@@ -629,7 +667,9 @@ def render_hub(lang):
     </div>
 {tv_tape(TV_LOCALE[lang])}
     <div class="container">
-{groups}    </div>
+{groups}
+{ad(lang)}
+    </div>
   </main>
 {footer(lang)}"""
 
@@ -680,7 +720,7 @@ def render_index(lang):
     </div>
     <div class="section-divider"></div>
     <div class="container">
-{ad()}
+{ad(lang)}
     </div>
   </main>
 {footer(lang)}"""
@@ -752,7 +792,7 @@ def render_economy(lang):
       <div class="post-body">
 {body}
       </div>
-{ad()}
+{ad(lang)}
       <a href="index.html" class="back-btn">{('← 홈으로' if lang=='ko' else '← ホームへ')}</a>
     </article>
   </main>
@@ -876,6 +916,11 @@ def render_privacy(lang):
       <p>사이트는 쿠키를 사용해 이용자의 방문 기록 및 선호도를 저장합니다. 브라우저 설정에서 쿠키를 거부할 수 있으나, 일부 기능 이용이 제한될 수 있습니다.</p>
       <h2>4. 제3자 제공</h2>
       <p>사이트는 이용자의 동의 없이 개인정보를 제3자에게 제공하지 않습니다. 단, 법령에 따른 요구가 있는 경우는 예외입니다.</p>
+      <h2>5. Google AdSense 및 광고 쿠키</h2>
+      <p>당 사이트는 Google AdSense를 통해 광고를 게재합니다. Google을 포함한 제3자 광고 사업자는 쿠키를 사용하여 이용자의 이전 방문 기록을 바탕으로 맞춤형 광고를 제공합니다. Google이 광고 쿠키(DoubleClick 쿠키 포함)를 사용함에 따라, 이용자의 당 사이트 및 다른 웹사이트 방문 정보에 기반한 광고가 표시될 수 있습니다.</p>
+      <p>이용자는 <a href="https://www.google.com/settings/ads" rel="noopener" target="_blank" style="color: var(--color-up);">Google 광고 설정</a>에서 맞춤형 광고를 비활성화할 수 있습니다. 또한 <a href="https://www.aboutads.info/choices/" rel="noopener" target="_blank" style="color: var(--color-up);">www.aboutads.info</a>에서 제3자 업체의 맞춤형 광고 쿠키 사용을 거부할 수 있습니다. Google의 광고 관련 데이터 처리에 대한 자세한 내용은 <a href="https://policies.google.com/technologies/partner-sites" rel="noopener" target="_blank" style="color: var(--color-up);">Google 정책</a>을 참고하세요.</p>
+      <h2>6. 문의</h2>
+      <p>개인정보 관련 문의는 <a href="contact.html" style="color: var(--color-up);">문의하기</a> 페이지를 통해 접수해 주세요.</p>
       <p style="margin-top: 32px; font-size: 12px; color: var(--text-muted);">최종 업데이트: 2026년 6월 16일</p>"""
     else:
         desc = "マーケットインサイトのプライバシーポリシー"
@@ -896,6 +941,11 @@ def render_privacy(lang):
       <p>当サイトはCookieを使用して、ユーザーの訪問記録や嗜好を保存します。ブラウザの設定でCookieを拒否できますが、一部の機能がご利用いただけなくなることがあります。</p>
       <h2>4. 第三者への提供</h2>
       <p>当サイトは、ユーザーの同意なく個人情報を第三者に提供しません。ただし、法令による要求がある場合は例外とします。</p>
+      <h2>5. Google AdSenseおよび広告Cookie</h2>
+      <p>当サイトはGoogle AdSenseを通じて広告を配信しています。Googleを含む第三者の広告事業者は、Cookieを使用してユーザーの過去の訪問履歴に基づくパーソナライズ広告を提供します。Googleが広告Cookie（DoubleClick Cookieを含む）を使用することにより、ユーザーの当サイトおよび他のウェブサイトへのアクセス情報に基づいた広告が表示される場合があります。</p>
+      <p>ユーザーは <a href="https://www.google.com/settings/ads" rel="noopener" target="_blank" style="color: var(--color-up);">Google広告設定</a> でパーソナライズ広告を無効にできます。また <a href="https://www.aboutads.info/choices/" rel="noopener" target="_blank" style="color: var(--color-up);">www.aboutads.info</a> で第三者によるパーソナライズ広告Cookieの使用を拒否できます。Googleの広告に関するデータ処理の詳細は <a href="https://policies.google.com/technologies/partner-sites" rel="noopener" target="_blank" style="color: var(--color-up);">Googleのポリシー</a> をご覧ください。</p>
+      <h2>6. お問い合わせ</h2>
+      <p>個人情報に関するお問い合わせは <a href="contact.html" style="color: var(--color-up);">お問い合わせ</a> ページよりご連絡ください。</p>
       <p style="margin-top: 32px; font-size: 12px; color: var(--text-muted);">最終更新日: 2026年6月16日</p>"""
     return static_page(lang, "privacy-policy.html", title, desc, body)
 
@@ -969,6 +1019,20 @@ def render_root_index():
 """
 
 
+def render_ads_txt():
+    # ads.txt authorizes Google to sell ad inventory for this domain.
+    pub = ADSENSE_CLIENT.replace("ca-", "")  # ads.txt uses pub-XXXX (no "ca-")
+    return f"google.com, {pub}, DIRECT, f08c47fec0942fa0\n"
+
+
+def render_robots():
+    return f"""User-agent: *
+Allow: /
+
+Sitemap: {SITE}/sitemap.xml
+"""
+
+
 def render_sitemap():
     pages = ["index.html", "stock-analysis.html", "economy-trends.html",
              "about.html", "contact.html", "privacy-policy.html", "terms.html"]
@@ -1014,7 +1078,9 @@ def main():
             write(f"{lang}/post-{t['slug']}.html", render_post(t, lang))
     write("index.html", render_root_index())
     write("sitemap.xml", render_sitemap())
-    print(f"Generated {len(TICKERS)} tickers x2 langs + structural pages.")
+    write("ads.txt", render_ads_txt())
+    write("robots.txt", render_robots())
+    print(f"Generated {len(TICKERS)} tickers x2 langs + structural pages + ads.txt/robots.txt.")
 
 
 if __name__ == "__main__":
