@@ -6,7 +6,7 @@ SITE = "https://insukimee.github.io/-"
 
 # ---------------------------------------------------------------- AdSense config
 # TODO(owner): replace with your real AdSense publisher ID (keep the "ca-" prefix).
-ADSENSE_CLIENT = "ca-pub-XXXXXXXXXXXXXXXX"
+ADSENSE_CLIENT = "ca-pub-4253549478648317"
 # TODO(owner): after approval, create ad units and paste their slot IDs here.
 AD_SLOT_DISPLAY = "1234567890"      # responsive display unit (lists, page bottom)
 AD_SLOT_INARTICLE = "0987654321"    # in-article fluid unit (inside posts)
