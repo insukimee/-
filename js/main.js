@@ -102,4 +102,43 @@
       }
     });
   }
+
+  // ── PWA: service worker + install prompt ───────────────────────────────────
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('../sw.js').catch(function () {});
+    });
+  }
+
+  var deferredPrompt = null;
+  var isKo = (document.documentElement.lang || 'ko').indexOf('ja') !== 0;
+  var INSTALL_LABEL = isKo ? '📲 앱 설치' : '📲 アプリをインストール';
+
+  window.addEventListener('beforeinstallprompt', function (e) {
+    e.preventDefault();
+    deferredPrompt = e;
+    showInstallButton();
+  });
+
+  function showInstallButton() {
+    if (document.getElementById('pwa-install-btn')) return;
+    var btn = document.createElement('button');
+    btn.id = 'pwa-install-btn';
+    btn.className = 'pwa-install-btn';
+    btn.textContent = INSTALL_LABEL;
+    btn.addEventListener('click', function () {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.finally(function () {
+        deferredPrompt = null;
+        btn.remove();
+      });
+    });
+    document.body.appendChild(btn);
+  }
+
+  window.addEventListener('appinstalled', function () {
+    var b = document.getElementById('pwa-install-btn');
+    if (b) b.remove();
+  });
 })();

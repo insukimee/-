@@ -463,6 +463,24 @@ main {
 .card-quote.q-up { color: var(--color-up); }
 .card-quote.q-down { color: var(--color-down); }
 
+/* PWA install button */
+.pwa-install-btn {
+  position: fixed;
+  right: 14px;
+  bottom: 14px;
+  z-index: 150;
+  padding: 11px 16px;
+  background: var(--color-up);
+  color: #06281c;
+  font-size: 13px;
+  font-weight: 800;
+  border: none;
+  border-radius: 999px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+  cursor: pointer;
+}
+.pwa-install-btn:active { opacity: 0.88; }
+
 /* AdSense in-article spacing */
 .ad-inarticle { margin: var(--space-lg) 0; }
 .ad-container .adsbygoogle { display: block; }
