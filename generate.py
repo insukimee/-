@@ -153,6 +153,15 @@ def head(lang, title, desc, slug, other_slug):
   <link rel="alternate" hreflang="{lang}" href="{slug}">
   <link rel="alternate" hreflang="{other}" href="../{other}/{other_slug}">
   <link rel="stylesheet" href="../css/style.css">
+  <link rel="manifest" href="../manifest.webmanifest">
+  <meta name="theme-color" content="#0D0D0D">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="{LOGO[lang]}">
+  <link rel="icon" type="image/png" sizes="32x32" href="../icons/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="../icons/icon-192.png">
+  <link rel="apple-touch-icon" href="../icons/icon-180.png">
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={ADSENSE_CLIENT}" crossorigin="anonymous"></script>
 </head>"""
 
@@ -1019,6 +1028,89 @@ def render_root_index():
 """
 
 
+def render_manifest():
+    return """{
+  "name": "마켓인사이트 · MarketInsight",
+  "short_name": "마켓인사이트",
+  "description": "미국 증시 핵심 종목과 경제 흐름을 분석하는 투자 인사이트 앱",
+  "lang": "ko",
+  "dir": "ltr",
+  "start_url": "./ko/index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0D0D0D",
+  "theme_color": "#0D0D0D",
+  "categories": ["finance", "news", "business"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
+"""
+
+
+def render_sw():
+    # App-shell precache + cache-first for same-origin static assets.
+    shell = ["./", "./ko/index.html", "./ja/index.html",
+             "./ko/stock-analysis.html", "./ja/stock-analysis.html",
+             "./css/style.css", "./js/main.js",
+             "./icons/icon-192.png", "./icons/icon-512.png", "./manifest.webmanifest"]
+    precache = ",\n  ".join(f'"{u}"' for u in shell)
+    return f"""/* MarketInsight service worker */
+const CACHE = "mi-cache-v1";
+const SHELL = [
+  {precache}
+];
+
+self.addEventListener("install", (e) => {{
+  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL)).catch(() => {{}}));
+  self.skipWaiting();
+}});
+
+self.addEventListener("activate", (e) => {{
+  e.waitUntil(
+    caches.keys().then((keys) =>
+      Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k)))
+    )
+  );
+  self.clients.claim();
+}});
+
+self.addEventListener("fetch", (e) => {{
+  const req = e.request;
+  if (req.method !== "GET") return;
+  const url = new URL(req.url);
+  // Only handle same-origin requests; let TradingView/AdSense go to network.
+  if (url.origin !== self.location.origin) return;
+
+  // HTML: network-first (fresh content), fall back to cache when offline.
+  if (req.mode === "navigate" || (req.headers.get("accept") || "").includes("text/html")) {{
+    e.respondWith(
+      fetch(req).then((res) => {{
+        const copy = res.clone();
+        caches.open(CACHE).then((c) => c.put(req, copy));
+        return res;
+      }}).catch(() => caches.match(req).then((r) => r || caches.match("./ko/index.html")))
+    );
+    return;
+  }}
+
+  // Static assets: cache-first.
+  e.respondWith(
+    caches.match(req).then((cached) =>
+      cached || fetch(req).then((res) => {{
+        const copy = res.clone();
+        caches.open(CACHE).then((c) => c.put(req, copy));
+        return res;
+      }}).catch(() => cached)
+    )
+  );
+}});
+"""
+
+
 def render_ads_txt():
     # ads.txt authorizes Google to sell ad inventory for this domain.
     pub = ADSENSE_CLIENT.replace("ca-", "")  # ads.txt uses pub-XXXX (no "ca-")
@@ -1080,7 +1172,9 @@ def main():
     write("sitemap.xml", render_sitemap())
     write("ads.txt", render_ads_txt())
     write("robots.txt", render_robots())
-    print(f"Generated {len(TICKERS)} tickers x2 langs + structural pages + ads.txt/robots.txt.")
+    write("manifest.webmanifest", render_manifest())
+    write("sw.js", render_sw())
+    print(f"Generated {len(TICKERS)} tickers x2 langs + structural pages + PWA (manifest/sw) + ads.txt/robots.txt.")
 
 
 if __name__ == "__main__":
