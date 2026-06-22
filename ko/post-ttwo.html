@@ -87,6 +87,28 @@
         <h2>4. 종합 평가</h2>
         <p>GTA VI 모멘텀이 지배하는 이벤트형 종목으로, 출시 일정과 초기 판매가 주가의 방향을 결정합니다.</p>
       </div>
+      <section class="comments">
+        <h2 class="comments-title">💬 댓글</h2>
+        <div id="disqus_thread"></div>
+        <script>
+          var disqus_config = function () {
+            this.page.url = "https://insukimee.github.io/-/ko/post-ttwo.html";
+            this.page.identifier = "ko/post-ttwo";
+          };
+          (function () {
+            if ("REPLACE_WITH_YOUR_DISQUS_SHORTNAME".indexOf("REPLACE_WITH") === 0) {
+              document.getElementById("disqus_thread").innerHTML =
+                '<p style="color:var(--text-muted);font-size:13px;">댓글 기능은 곧 활성화됩니다.</p>';
+              return;
+            }
+            var d = document, s = d.createElement("script");
+            s.src = "https://REPLACE_WITH_YOUR_DISQUS_SHORTNAME.disqus.com/embed.js";
+            s.setAttribute("data-timestamp", +new Date());
+            (d.head || d.body).appendChild(s);
+          })();
+        </script>
+        <noscript>댓글 기능은 곧 활성화됩니다.</noscript>
+      </section>
       <div class="ad-container">
         <div class="ad-label">광고</div>
         <ins class="adsbygoogle"

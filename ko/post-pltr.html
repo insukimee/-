@@ -87,6 +87,28 @@
         <h2>4. 종합 평가</h2>
         <p>AI 실전 적용(operational AI)의 대표주로 성장성은 뛰어나나, 가격 부담이 커 변동성을 견딜 수 있는 관점에서 접근해야 합니다.</p>
       </div>
+      <section class="comments">
+        <h2 class="comments-title">💬 댓글</h2>
+        <div id="disqus_thread"></div>
+        <script>
+          var disqus_config = function () {
+            this.page.url = "https://insukimee.github.io/-/ko/post-pltr.html";
+            this.page.identifier = "ko/post-pltr";
+          };
+          (function () {
+            if ("REPLACE_WITH_YOUR_DISQUS_SHORTNAME".indexOf("REPLACE_WITH") === 0) {
+              document.getElementById("disqus_thread").innerHTML =
+                '<p style="color:var(--text-muted);font-size:13px;">댓글 기능은 곧 활성화됩니다.</p>';
+              return;
+            }
+            var d = document, s = d.createElement("script");
+            s.src = "https://REPLACE_WITH_YOUR_DISQUS_SHORTNAME.disqus.com/embed.js";
+            s.setAttribute("data-timestamp", +new Date());
+            (d.head || d.body).appendChild(s);
+          })();
+        </script>
+        <noscript>댓글 기능은 곧 활성화됩니다.</noscript>
+      </section>
       <div class="ad-container">
         <div class="ad-label">광고</div>
         <ins class="adsbygoogle"

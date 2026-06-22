@@ -87,6 +87,28 @@
         <h2>4. 종합 평가</h2>
         <p>개별 종목 선별이 부담스러운 투자자에게 사이버보안 성장 테마를 분산으로 담는 합리적 수단입니다.</p>
       </div>
+      <section class="comments">
+        <h2 class="comments-title">💬 댓글</h2>
+        <div id="disqus_thread"></div>
+        <script>
+          var disqus_config = function () {
+            this.page.url = "https://insukimee.github.io/-/ko/post-cibr.html";
+            this.page.identifier = "ko/post-cibr";
+          };
+          (function () {
+            if ("REPLACE_WITH_YOUR_DISQUS_SHORTNAME".indexOf("REPLACE_WITH") === 0) {
+              document.getElementById("disqus_thread").innerHTML =
+                '<p style="color:var(--text-muted);font-size:13px;">댓글 기능은 곧 활성화됩니다.</p>';
+              return;
+            }
+            var d = document, s = d.createElement("script");
+            s.src = "https://REPLACE_WITH_YOUR_DISQUS_SHORTNAME.disqus.com/embed.js";
+            s.setAttribute("data-timestamp", +new Date());
+            (d.head || d.body).appendChild(s);
+          })();
+        </script>
+        <noscript>댓글 기능은 곧 활성화됩니다.</noscript>
+      </section>
       <div class="ad-container">
         <div class="ad-label">광고</div>
         <ins class="adsbygoogle"

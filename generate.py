@@ -12,6 +12,12 @@ AD_SLOT_DISPLAY = "1234567890"      # responsive display unit (lists, page botto
 AD_SLOT_INARTICLE = "0987654321"    # in-article fluid unit (inside posts)
 AD_LABEL = {"ko": "광고", "ja": "広告"}
 
+# ---------------------------------------------------------------- comments (Disqus)
+# TODO(owner): create a free site at https://disqus.com (Admin) and paste its
+# "shortname" here. Until then, comment boxes show a setup notice.
+DISQUS_SHORTNAME = "REPLACE_WITH_YOUR_DISQUS_SHORTNAME"
+COMMENTS_TITLE = {"ko": "💬 댓글", "ja": "💬 コメント"}
+
 # ---------------------------------------------------------------- nav config
 NAV = {
     "ko": [
@@ -249,6 +255,34 @@ def ad_inarticle(lang="ko"):
                data-ad-slot="{AD_SLOT_INARTICLE}"></ins>
           <script>(adsbygoogle = window.adsbygoogle || []).push({{}});</script>
         </div>"""
+
+
+def comments(lang, identifier, url):
+    """Disqus comment thread (one per page → per-ticker threads)."""
+    setup_note = ("댓글 기능은 곧 활성화됩니다." if lang == "ko"
+                  else "コメント機能はまもなく有効になります。")
+    return f"""      <section class="comments">
+        <h2 class="comments-title">{COMMENTS_TITLE[lang]}</h2>
+        <div id="disqus_thread"></div>
+        <script>
+          var disqus_config = function () {{
+            this.page.url = "{url}";
+            this.page.identifier = "{identifier}";
+          }};
+          (function () {{
+            if ("{DISQUS_SHORTNAME}".indexOf("REPLACE_WITH") === 0) {{
+              document.getElementById("disqus_thread").innerHTML =
+                '<p style="color:var(--text-muted);font-size:13px;">{setup_note}</p>';
+              return;
+            }}
+            var d = document, s = d.createElement("script");
+            s.src = "https://{DISQUS_SHORTNAME}.disqus.com/embed.js";
+            s.setAttribute("data-timestamp", +new Date());
+            (d.head || d.body).appendChild(s);
+          }})();
+        </script>
+        <noscript>{setup_note}</noscript>
+      </section>"""
 
 
 # ---------------------------------------------------------------- ticker data
@@ -623,6 +657,7 @@ def render_post(t, lang):
         <p>{lead}</p>
 {body_html}
       </div>
+{comments(lang, f"{lang}/post-{t['slug']}", f"{SITE}/{lang}/post-{t['slug']}.html")}
 {ad(lang)}
       <a href="stock-analysis.html" class="back-btn">{BACK[lang]}</a>
     </article>
@@ -801,6 +836,7 @@ def render_economy(lang):
       <div class="post-body">
 {body}
       </div>
+{comments(lang, f"{lang}/economy-trends", f"{SITE}/{lang}/economy-trends.html")}
 {ad(lang)}
       <a href="index.html" class="back-btn">{('← 홈으로' if lang=='ko' else '← ホームへ')}</a>
     </article>
@@ -928,7 +964,9 @@ def render_privacy(lang):
       <h2>5. Google AdSense 및 광고 쿠키</h2>
       <p>당 사이트는 Google AdSense를 통해 광고를 게재합니다. Google을 포함한 제3자 광고 사업자는 쿠키를 사용하여 이용자의 이전 방문 기록을 바탕으로 맞춤형 광고를 제공합니다. Google이 광고 쿠키(DoubleClick 쿠키 포함)를 사용함에 따라, 이용자의 당 사이트 및 다른 웹사이트 방문 정보에 기반한 광고가 표시될 수 있습니다.</p>
       <p>이용자는 <a href="https://www.google.com/settings/ads" rel="noopener" target="_blank" style="color: var(--color-up);">Google 광고 설정</a>에서 맞춤형 광고를 비활성화할 수 있습니다. 또한 <a href="https://www.aboutads.info/choices/" rel="noopener" target="_blank" style="color: var(--color-up);">www.aboutads.info</a>에서 제3자 업체의 맞춤형 광고 쿠키 사용을 거부할 수 있습니다. Google의 광고 관련 데이터 처리에 대한 자세한 내용은 <a href="https://policies.google.com/technologies/partner-sites" rel="noopener" target="_blank" style="color: var(--color-up);">Google 정책</a>을 참고하세요.</p>
-      <h2>6. 문의</h2>
+      <h2>6. 댓글 서비스 (Disqus)</h2>
+      <p>당 사이트는 댓글 기능을 위해 제3자 서비스인 Disqus를 사용합니다. 댓글 작성 시 Disqus가 이용자의 정보(로그인 계정, IP 등)와 쿠키를 자체 정책에 따라 처리합니다. 자세한 내용은 <a href="https://disqus.com/data-sharing-settings/" rel="noopener" target="_blank" style="color: var(--color-up);">Disqus 개인정보 설정</a>을 참고하세요.</p>
+      <h2>7. 문의</h2>
       <p>개인정보 관련 문의는 <a href="contact.html" style="color: var(--color-up);">문의하기</a> 페이지를 통해 접수해 주세요.</p>
       <p style="margin-top: 32px; font-size: 12px; color: var(--text-muted);">최종 업데이트: 2026년 6월 16일</p>"""
     else:
@@ -953,7 +991,9 @@ def render_privacy(lang):
       <h2>5. Google AdSenseおよび広告Cookie</h2>
       <p>当サイトはGoogle AdSenseを通じて広告を配信しています。Googleを含む第三者の広告事業者は、Cookieを使用してユーザーの過去の訪問履歴に基づくパーソナライズ広告を提供します。Googleが広告Cookie（DoubleClick Cookieを含む）を使用することにより、ユーザーの当サイトおよび他のウェブサイトへのアクセス情報に基づいた広告が表示される場合があります。</p>
       <p>ユーザーは <a href="https://www.google.com/settings/ads" rel="noopener" target="_blank" style="color: var(--color-up);">Google広告設定</a> でパーソナライズ広告を無効にできます。また <a href="https://www.aboutads.info/choices/" rel="noopener" target="_blank" style="color: var(--color-up);">www.aboutads.info</a> で第三者によるパーソナライズ広告Cookieの使用を拒否できます。Googleの広告に関するデータ処理の詳細は <a href="https://policies.google.com/technologies/partner-sites" rel="noopener" target="_blank" style="color: var(--color-up);">Googleのポリシー</a> をご覧ください。</p>
-      <h2>6. お問い合わせ</h2>
+      <h2>6. コメントサービス（Disqus）</h2>
+      <p>当サイトはコメント機能のために第三者サービスのDisqusを利用しています。コメント投稿時、Disqusはユーザーの情報（ログインアカウント、IPなど）およびCookieを自社のポリシーに従って処理します。詳細は <a href="https://disqus.com/data-sharing-settings/" rel="noopener" target="_blank" style="color: var(--color-up);">Disqusのプライバシー設定</a> をご覧ください。</p>
+      <h2>7. お問い合わせ</h2>
       <p>個人情報に関するお問い合わせは <a href="contact.html" style="color: var(--color-up);">お問い合わせ</a> ページよりご連絡ください。</p>
       <p style="margin-top: 32px; font-size: 12px; color: var(--text-muted);">最終更新日: 2026年6月16日</p>"""
     return static_page(lang, "privacy-policy.html", title, desc, body)

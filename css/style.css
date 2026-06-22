@@ -463,6 +463,19 @@ main {
 .card-quote.q-up { color: var(--color-up); }
 .card-quote.q-down { color: var(--color-down); }
 
+/* Comments (Disqus) */
+.comments {
+  margin-top: var(--space-2xl);
+  padding-top: var(--space-lg);
+  border-top: 1px solid var(--border-color);
+}
+.comments-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: var(--space-md);
+}
+
 /* PWA install button */
 .pwa-install-btn {
   position: fixed;
