@@ -87,6 +87,28 @@
         <h2>4. 종합 평가</h2>
         <p>자동차 실적과 AI/로봇 미래가치가 혼재된 종목으로, 로보택시·옵티머스의 실제 진척이 주가의 핵심 동인입니다.</p>
       </div>
+      <section class="comments">
+        <h2 class="comments-title">💬 댓글</h2>
+        <div id="disqus_thread"></div>
+        <script>
+          var disqus_config = function () {
+            this.page.url = "https://insukimee.github.io/-/ko/post-tsla.html";
+            this.page.identifier = "ko/post-tsla";
+          };
+          (function () {
+            if ("REPLACE_WITH_YOUR_DISQUS_SHORTNAME".indexOf("REPLACE_WITH") === 0) {
+              document.getElementById("disqus_thread").innerHTML =
+                '<p style="color:var(--text-muted);font-size:13px;">댓글 기능은 곧 활성화됩니다.</p>';
+              return;
+            }
+            var d = document, s = d.createElement("script");
+            s.src = "https://REPLACE_WITH_YOUR_DISQUS_SHORTNAME.disqus.com/embed.js";
+            s.setAttribute("data-timestamp", +new Date());
+            (d.head || d.body).appendChild(s);
+          })();
+        </script>
+        <noscript>댓글 기능은 곧 활성화됩니다.</noscript>
+      </section>
       <div class="ad-container">
         <div class="ad-label">광고</div>
         <ins class="adsbygoogle"
