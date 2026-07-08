@@ -37,6 +37,14 @@ func _build_ragdoll() -> void:
 	_connect_joint(torso, leg_l, Vector3(-0.2, -0.45, 0))
 	_connect_joint(torso, leg_r, Vector3(0.2, -0.45, 0))
 
+	# 캡슐 사이 이음매를 가려서 팔다리가 따로 노는 느낌을 줄이는 관절 커버
+	_add_joint_cover(Vector3(0, 0.55, 0), 0.16)
+	_add_joint_cover(Vector3(-0.35, 0.3, 0), 0.13)
+	_add_joint_cover(Vector3(0.35, 0.3, 0), 0.13)
+	_add_joint_cover(Vector3(-0.2, -0.45, 0), 0.15)
+	_add_joint_cover(Vector3(0.2, -0.45, 0), 0.15)
+
+	_add_face()
 	_setup_ground_ray()
 
 func _make_limb(local_pos: Vector3, radius: float, height: float, mass: float, is_sphere: bool = false) -> RigidBody3D:
@@ -68,19 +76,53 @@ func _make_limb(local_pos: Vector3, radius: float, height: float, mass: float, i
 		mesh_instance.mesh = mesh
 	body.add_child(shape)
 
-	var mat := StandardMaterial3D.new()
-	mat.albedo_color = player_color
-	mesh_instance.material_override = mat
+	mesh_instance.material_override = _make_body_material(player_color)
 	body.add_child(mesh_instance)
 
 	add_child(body)
 	return body
+
+func _make_body_material(color: Color) -> StandardMaterial3D:
+	var mat := StandardMaterial3D.new()
+	mat.albedo_color = color
+	mat.roughness = 0.55
+	mat.metallic = 0.05
+	return mat
+
+func _add_joint_cover(local_pos: Vector3, radius: float) -> void:
+	# 물리에는 관여하지 않는 순수 비주얼용 구체
+	var mesh_instance := MeshInstance3D.new()
+	var mesh := SphereMesh.new()
+	mesh.radius = radius
+	mesh.height = radius * 2.0
+	mesh_instance.mesh = mesh
+	mesh_instance.material_override = _make_body_material(player_color)
+	mesh_instance.position = local_pos
+	add_child(mesh_instance)
+
+func _add_face() -> void:
+	var eye_mat := StandardMaterial3D.new()
+	eye_mat.albedo_color = Color.BLACK
+	eye_mat.roughness = 0.3
+	for side in [-1.0, 1.0]:
+		var eye := MeshInstance3D.new()
+		var mesh := SphereMesh.new()
+		mesh.radius = 0.035
+		mesh.height = 0.07
+		eye.mesh = mesh
+		eye.material_override = eye_mat
+		# head 로컬 좌표 기준 (head 반지름 0.26, 앞쪽 살짝 튀어나오게)
+		eye.position = Vector3(side * 0.1, 0.03, 0.24)
+		head.add_child(eye)
 
 func _connect_joint(a: RigidBody3D, b: RigidBody3D, world_offset: Vector3) -> void:
 	var joint := PinJoint3D.new()
 	joint.position = a.position + world_offset
 	joint.node_a = a.get_path()
 	joint.node_b = b.get_path()
+	# 관절이 흐물흐물 진동하지 않도록 감쇠를 살짝 높여 안정감을 준다
+	joint.set_param(PinJoint3D.PARAM_BIAS, 0.4)
+	joint.set_param(PinJoint3D.PARAM_DAMPING, 1.2)
 	add_child(joint)
 
 func _setup_ground_ray() -> void:
