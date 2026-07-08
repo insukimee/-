@@ -55,8 +55,16 @@ func _end_game() -> void:
 	SoundFX.play_win()
 	if winner:
 		_status_label.text = "%s 승리!\nR 키로 재시작" % winner.name
+		_play_victory_confetti(winner)
 	else:
 		_status_label.text = "무승부!\nR 키로 재시작"
+
+func _play_victory_confetti(winner: Player) -> void:
+	var confetti_colors := [Color.WHITE, Color.GOLD, winner.player_color]
+	for i in range(3):
+		var color: Color = confetti_colors[i % confetti_colors.size()]
+		FX.spawn_burst(self, winner.torso.global_position, color, 20)
+		await get_tree().create_timer(0.18).timeout
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not _game_over:

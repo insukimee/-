@@ -34,6 +34,7 @@ func _ready() -> void:
 func _build_ragdoll() -> void:
 	# 몸통
 	torso = _make_limb(Vector2(0, 0), Vector2(20, 30), 1.0)
+	torso.add_to_group("player_torso")
 	# 머리
 	head = _make_limb(Vector2(0, -45), Vector2(16, 16), 0.6, true)
 	# 팔
@@ -139,14 +140,18 @@ func _push_nearby() -> void:
 	query.exclude = [self]
 	var results := space_state.intersect_shape(query)
 	var hit_something := false
+	var hit_pos := Vector2.ZERO
 	for r in results:
 		var col = r["collider"]
 		if col is RigidBody2D and col.get_parent() != self:
 			var push_dir = (col.global_position - arm_r.global_position).normalized()
 			col.apply_central_impulse(push_dir * push_impulse)
 			hit_something = true
+			hit_pos = col.global_position
 	if hit_something:
 		SoundFX.play_punch()
+		FX.spawn_burst(get_tree().current_scene, hit_pos, player_color, 10)
+		get_tree().call_group("camera_rig", "shake", 5.0, 0.12)
 
 func _try_grab() -> void:
 	if grabbed_body:
@@ -201,7 +206,10 @@ func _go_out() -> void:
 	is_out = true
 	print(name, " 완전 탈락!")
 	SoundFX.play_out()
+	FX.spawn_burst(get_tree().current_scene, torso.global_position, player_color, 18)
+	get_tree().call_group("camera_rig", "shake", 10.0, 0.25)
 	_release_grab()
+	torso.remove_from_group("player_torso")
 	for limb in [torso, head, arm_l, arm_r, leg_l, leg_r]:
 		if limb:
 			limb.freeze = true

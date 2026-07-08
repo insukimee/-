@@ -14,6 +14,7 @@ config/features=PackedStringArray("4.3", "Forward Plus")
 [autoload]
 
 SoundFX="*res://scripts/SoundFX.gd"
+FX="*res://scripts/FX.gd"
 
 [physics]
 
