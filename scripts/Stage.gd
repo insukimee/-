@@ -1,15 +1,36 @@
 extends Node2D
 class_name Stage
 
-## 기본 스테이지: 바닥 + 낙사존
+## 기본 스테이지: 좁아지는 발판 + 낙사존
 ## 추후 컨베이어 벨트, 회전 장애물 등 기믹은 이 스크립트에 노드 추가로 확장
 
 @export var floor_width: float = 800.0
 @export var floor_height: float = 40.0
 
+## 좁아지는 발판 기믹 (GDD 5번 1순위)
+@export var narrowing_enabled: bool = true
+@export var narrow_delay: float = 5.0  # 좁아지기 시작까지 대기 시간(초)
+@export var narrow_speed: float = 10.0  # 초당 줄어드는 폭(px)
+@export var narrow_min_width: float = 160.0  # 최소 폭
+
+var _floor_shape: RectangleShape2D
+var _floor_visual: ColorRect
+var _narrow_elapsed: float = 0.0
+
 func _ready() -> void:
 	_build_floor()
 	_build_death_zone()
+
+func _process(delta: float) -> void:
+	if not narrowing_enabled or _floor_shape.size.x <= narrow_min_width:
+		return
+	_narrow_elapsed += delta
+	if _narrow_elapsed < narrow_delay:
+		return
+	var new_width: float = max(_floor_shape.size.x - narrow_speed * delta, narrow_min_width)
+	_floor_shape.size.x = new_width
+	_floor_visual.size.x = new_width
+	_floor_visual.position.x = -new_width / 2.0
 
 func _build_floor() -> void:
 	var floor_body := StaticBody2D.new()
@@ -27,6 +48,9 @@ func _build_floor() -> void:
 	floor_body.add_child(visual)
 
 	add_child(floor_body)
+
+	_floor_shape = rect
+	_floor_visual = visual
 
 func _build_death_zone() -> void:
 	# 스테이지 하단에 닿으면 탈락 처리하는 Area2D
