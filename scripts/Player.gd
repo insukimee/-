@@ -5,6 +5,8 @@ class_name Player
 ## 몸통(Torso)을 중심으로 머리/팔/다리를 PinJoint2D로 연결한 물리 기반 캐릭터
 ## 1P: 이동(WASD/방향키) + 점프(Space) + 잡기(Shift) + 밀기(마우스 좌클릭)
 
+const RAGDOLL_VISUAL_SCRIPT := preload("res://scripts/RagdollVisual.gd")
+
 @export var move_force: float = 900.0
 @export var jump_impulse: float = 350.0
 @export var push_impulse: float = 400.0
@@ -60,16 +62,17 @@ func _make_limb(local_pos: Vector2, size: Vector2, mass: float, is_circle: bool 
 		c.radius = size.x
 		shape.shape = c
 	else:
-		var r := RectangleShape2D.new()
-		r.size = size
-		shape.shape = r
+		var cap := CapsuleShape2D.new()
+		cap.radius = size.x / 2.0
+		cap.height = size.y
+		shape.shape = cap
 	body.add_child(shape)
 
-	var color_rect := ColorRect.new()
-	color_rect.color = player_color
-	color_rect.size = size
-	color_rect.position = -size / 2.0
-	body.add_child(color_rect)
+	var visual := RAGDOLL_VISUAL_SCRIPT.new()
+	visual.fill_color = player_color
+	visual.shape_size = size
+	visual.is_circle = is_circle
+	body.add_child(visual)
 
 	add_child(body)
 	return body
