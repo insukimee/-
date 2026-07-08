@@ -27,6 +27,8 @@ var is_grounded: bool = false
 var is_out: bool = false
 var grabbed_body: RigidBody2D = null
 var grab_joint: PinJoint2D = null
+var _ground_ray_l: RayCast2D
+var _ground_ray_r: RayCast2D
 
 func _ready() -> void:
 	_build_ragdoll()
@@ -49,6 +51,8 @@ func _build_ragdoll() -> void:
 	_connect_joint(torso, arm_r, Vector2(15, -15))
 	_connect_joint(torso, leg_l, Vector2(-10, 20))
 	_connect_joint(torso, leg_r, Vector2(10, 20))
+
+	_setup_ground_rays()
 
 func _make_limb(local_pos: Vector2, size: Vector2, mass: float, is_circle: bool = false) -> RigidBody2D:
 	var body := RigidBody2D.new()
@@ -90,6 +94,23 @@ func _connect_joint(body_a: RigidBody2D, body_b: RigidBody2D, world_offset: Vect
 	joint.softness = 0.05
 	add_child(joint)
 
+func _setup_ground_rays() -> void:
+	# 다리 밑으로 짧은 레이캐스트를 쏴서 접지를 판정한다.
+	# (다리 수직 속도 기반 판정은 랙돌 물리 지터로 인해 대부분 false가 되어
+	#  스페이스바를 여러 번 눌러야 겨우 점프가 되는 문제가 있었음)
+	_ground_ray_l = _make_ground_ray(leg_l)
+	_ground_ray_r = _make_ground_ray(leg_r)
+	for limb in [torso, head, arm_l, arm_r, leg_l, leg_r]:
+		_ground_ray_l.add_exception(limb)
+		_ground_ray_r.add_exception(limb)
+
+func _make_ground_ray(leg: RigidBody2D) -> RayCast2D:
+	var ray := RayCast2D.new()
+	ray.target_position = Vector2(0, 20)
+	ray.collision_mask = 1
+	leg.add_child(ray)
+	return ray
+
 func _physics_process(_delta: float) -> void:
 	if not torso or is_out:
 		return
@@ -126,8 +147,7 @@ func _handle_movement() -> void:
 		_release_grab()
 
 func _check_grounded() -> void:
-	# 간단한 접지 판정: 다리의 수직 속도가 낮으면 접지로 간주 (1차 버전, 추후 Raycast로 개선 권장)
-	is_grounded = abs(leg_l.linear_velocity.y) < 50 or abs(leg_r.linear_velocity.y) < 50
+	is_grounded = _ground_ray_l.is_colliding() or _ground_ray_r.is_colliding()
 
 func _push_nearby() -> void:
 	# 팔 위치 기준으로 근처 다른 플레이어 몸통에 임펄스 적용
