@@ -91,11 +91,15 @@ func _physics_process(_delta: float) -> void:
 	_handle_movement()
 	_check_grounded()
 
+func _action(action_name: String) -> String:
+	# device_id 0 = 1P 입력 스킴, 1 = 2P 입력 스킴 (project.godot의 p1_*/p2_* 액션)
+	return "p%d_%s" % [device_id + 1, action_name]
+
 func _handle_movement() -> void:
 	var dir := Vector2.ZERO
-	if Input.is_action_pressed("move_left"):
+	if Input.is_action_pressed(_action("move_left")):
 		dir.x -= 1
-	if Input.is_action_pressed("move_right"):
+	if Input.is_action_pressed(_action("move_right")):
 		dir.x += 1
 
 	if dir.length() > 0:
@@ -104,13 +108,13 @@ func _handle_movement() -> void:
 		leg_l.apply_central_force(dir.normalized() * move_force * 0.3)
 		leg_r.apply_central_force(dir.normalized() * move_force * 0.3)
 
-	if Input.is_action_just_pressed("jump") and is_grounded:
+	if Input.is_action_just_pressed(_action("jump")) and is_grounded:
 		torso.apply_central_impulse(Vector2(0, -jump_impulse))
 
-	if Input.is_action_just_pressed("push"):
+	if Input.is_action_just_pressed(_action("push")):
 		_push_nearby()
 
-	if Input.is_action_pressed("grab"):
+	if Input.is_action_pressed(_action("grab")):
 		_try_grab()
 	else:
 		_release_grab()

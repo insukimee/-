@@ -22,28 +22,53 @@ renderer/rendering_method.mobile="gl_compatibility"
 
 [input]
 
-move_left={
+p1_move_left={
 "deadzone": 0.5,
 "events": [Object(InputEventKey,"physical_keycode":65,"pressed":false,"echo":false)
 ]
 }
-move_right={
+p1_move_right={
 "deadzone": 0.5,
 "events": [Object(InputEventKey,"physical_keycode":68,"pressed":false,"echo":false)
 ]
 }
-jump={
+p1_jump={
 "deadzone": 0.5,
 "events": [Object(InputEventKey,"physical_keycode":32,"pressed":false,"echo":false)
 ]
 }
-grab={
+p1_grab={
 "deadzone": 0.5,
-"events": [Object(InputEventKey,"physical_keycode":4194325,"pressed":false,"echo":false)
+"events": [Object(InputEventKey,"physical_keycode":4194325,"location":1,"pressed":false,"echo":false)
 ]
 }
-push={
+p1_push={
 "deadzone": 0.5,
 "events": [Object(InputEventMouseButton,"button_index":1,"pressed":false,"canceled":false,"double_click":false)
+]
+}
+p2_move_left={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"physical_keycode":4194319,"pressed":false,"echo":false)
+]
+}
+p2_move_right={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"physical_keycode":4194321,"pressed":false,"echo":false)
+]
+}
+p2_jump={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"physical_keycode":4194309,"pressed":false,"echo":false)
+]
+}
+p2_grab={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"physical_keycode":4194325,"location":2,"pressed":false,"echo":false)
+]
+}
+p2_push={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"physical_keycode":47,"pressed":false,"echo":false)
 ]
 }
