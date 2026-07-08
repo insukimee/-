@@ -11,6 +11,10 @@ config/description="2D physics-based party brawler (Gang Beasts style), 2-10 pla
 run/main_scene="res://scenes/Main.tscn"
 config/features=PackedStringArray("4.3", "Forward Plus")
 
+[autoload]
+
+SoundFX="*res://scripts/SoundFX.gd"
+
 [physics]
 
 2d/default_gravity=980

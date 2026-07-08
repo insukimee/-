@@ -12,6 +12,9 @@ const RAGDOLL_VISUAL_SCRIPT := preload("res://scripts/RagdollVisual.gd")
 @export var push_impulse: float = 400.0
 @export var player_color: Color = Color(0.9, 0.3, 0.3)
 @export var device_id: int = 0  # 로컬 멀티용: 0=키보드, 1=패드1 등
+@export var lives: int = 1  # 낙사존에 이 횟수만큼 떨어지면 완전 탈락 (기본 1: 즉시 탈락)
+
+signal went_out(player: Player)
 
 var torso: RigidBody2D
 var head: RigidBody2D
@@ -21,6 +24,7 @@ var leg_l: RigidBody2D
 var leg_r: RigidBody2D
 
 var is_grounded: bool = false
+var is_out: bool = false
 var grabbed_body: RigidBody2D = null
 var grab_joint: PinJoint2D = null
 
@@ -86,7 +90,7 @@ func _connect_joint(body_a: RigidBody2D, body_b: RigidBody2D, world_offset: Vect
 	add_child(joint)
 
 func _physics_process(_delta: float) -> void:
-	if not torso:
+	if not torso or is_out:
 		return
 	_handle_movement()
 	_check_grounded()
@@ -110,6 +114,7 @@ func _handle_movement() -> void:
 
 	if Input.is_action_just_pressed(_action("jump")) and is_grounded:
 		torso.apply_central_impulse(Vector2(0, -jump_impulse))
+		SoundFX.play_jump()
 
 	if Input.is_action_just_pressed(_action("push")):
 		_push_nearby()
@@ -133,11 +138,15 @@ func _push_nearby() -> void:
 	query.transform = Transform2D(0, arm_r.global_position)
 	query.exclude = [self]
 	var results := space_state.intersect_shape(query)
+	var hit_something := false
 	for r in results:
 		var col = r["collider"]
 		if col is RigidBody2D and col.get_parent() != self:
 			var push_dir = (col.global_position - arm_r.global_position).normalized()
 			col.apply_central_impulse(push_dir * push_impulse)
+			hit_something = true
+	if hit_something:
+		SoundFX.play_punch()
 
 func _try_grab() -> void:
 	if grabbed_body:
@@ -159,6 +168,7 @@ func _try_grab() -> void:
 			grab_joint.global_position = arm_r.global_position
 			grab_joint.node_a = arm_r.get_path()
 			grab_joint.node_b = col.get_path()
+			SoundFX.play_grab()
 			break
 
 func _release_grab() -> void:
@@ -168,9 +178,16 @@ func _release_grab() -> void:
 		grabbed_body = null
 
 func eliminate() -> void:
-	# 낙사존 진입 시 Stage.gd에서 호출됨. 1차 버전은 리스폰만 처리.
-	print(name, " 탈락!")
-	_respawn(Vector2(0, -100))
+	# 낙사존 진입 시 Stage.gd에서 호출됨.
+	if is_out:
+		return
+	lives -= 1
+	if lives <= 0:
+		_go_out()
+	else:
+		print(name, " 탈락! (남은 목숨 ", lives, ")")
+		SoundFX.play_eliminate()
+		_respawn(Vector2(0, -100))
 
 func _respawn(new_pos: Vector2) -> void:
 	position = new_pos
@@ -178,3 +195,17 @@ func _respawn(new_pos: Vector2) -> void:
 		if limb:
 			limb.linear_velocity = Vector2.ZERO
 			limb.angular_velocity = 0.0
+
+func _go_out() -> void:
+	# 목숨을 모두 소진하면 완전히 게임에서 빠진다 (콜리전 제거 + 숨김).
+	is_out = true
+	print(name, " 완전 탈락!")
+	SoundFX.play_out()
+	_release_grab()
+	for limb in [torso, head, arm_l, arm_r, leg_l, leg_r]:
+		if limb:
+			limb.freeze = true
+			limb.visible = false
+			limb.collision_layer = 0
+			limb.collision_mask = 0
+	went_out.emit(self)
