@@ -1,91 +1,173 @@
 extends Node2D
+class_name Player
 
-## 랙돌 캐릭터 컨트롤러: 몸통에 힘을 가해 이동시키고, 점프/잡기/밀기를 처리한다.
-## 정교한 조작감이 아니라 물리 반응 자체가 재미 요소이므로 로직은 최소한으로 유지한다.
+## 랙돌 캐릭터 컨트롤러
+## 몸통(Torso)을 중심으로 머리/팔/다리를 PinJoint2D로 연결한 물리 기반 캐릭터
+## 1P: 이동(WASD/방향키) + 점프(Space) + 잡기(Shift) + 밀기(마우스 좌클릭)
 
-@export var player_color: Color = Color.WHITE
-@export var player_index: int = 0
+@export var move_force: float = 900.0
+@export var jump_impulse: float = 350.0
+@export var push_impulse: float = 400.0
+@export var player_color: Color = Color(0.9, 0.3, 0.3)
+@export var device_id: int = 0  # 로컬 멀티용: 0=키보드, 1=패드1 등
 
-const MOVE_FORCE := 900.0
-const JUMP_IMPULSE := 380.0
-const GRAB_RANGE := 42.0
-const PUNCH_RANGE := 46.0
-const PUNCH_IMPULSE := 420.0
-const GROUND_CHECK_DISTANCE := 55.0
+var torso: RigidBody2D
+var head: RigidBody2D
+var arm_l: RigidBody2D
+var arm_r: RigidBody2D
+var leg_l: RigidBody2D
+var leg_r: RigidBody2D
 
-const INPUT_SCHEMES := [
-	{"left": "p1_left", "right": "p1_right", "jump": "p1_jump", "grab": "p1_grab", "punch": "p1_punch"},
-	{"left": "p2_left", "right": "p2_right", "jump": "p2_jump", "grab": "p2_grab", "punch": "p2_punch"},
-]
-
-@onready var torso: RigidBody2D = $Torso
-@onready var head: RigidBody2D = $Head
-@onready var arm_l: RigidBody2D = $ArmL
-@onready var arm_r: RigidBody2D = $ArmR
-@onready var leg_l: RigidBody2D = $LegL
-@onready var leg_r: RigidBody2D = $LegR
-@onready var ground_ray: RayCast2D = $Torso/GroundRayCast
-@onready var hand: Marker2D = $ArmR/Hand
-
-var _grab_joint: PinJoint2D = null
+var is_grounded: bool = false
+var grabbed_body: RigidBody2D = null
+var grab_joint: PinJoint2D = null
 
 func _ready() -> void:
-	ground_ray.target_position = Vector2(0, GROUND_CHECK_DISTANCE)
-	_apply_color()
-	_add_joint_collision_exceptions()
+	_build_ragdoll()
 
-func _add_joint_collision_exceptions() -> void:
-	for limb in [head, arm_l, arm_r, leg_l, leg_r]:
-		torso.add_collision_exception_with(limb)
-		limb.add_collision_exception_with(torso)
+func _build_ragdoll() -> void:
+	# 몸통
+	torso = _make_limb(Vector2(0, 0), Vector2(20, 30), 1.0)
+	# 머리
+	head = _make_limb(Vector2(0, -45), Vector2(16, 16), 0.6, true)
+	# 팔
+	arm_l = _make_limb(Vector2(-25, -10), Vector2(8, 25), 0.4)
+	arm_r = _make_limb(Vector2(25, -10), Vector2(8, 25), 0.4)
+	# 다리
+	leg_l = _make_limb(Vector2(-10, 40), Vector2(9, 28), 0.5)
+	leg_r = _make_limb(Vector2(10, 40), Vector2(9, 28), 0.5)
 
-func _apply_color() -> void:
-	for part in [torso, head, arm_l, arm_r, leg_l, leg_r]:
-		var visual := part.get_node_or_null("Visual")
-		if visual:
-			visual.color = player_color
+	_connect_joint(torso, head, Vector2(0, -25))
+	_connect_joint(torso, arm_l, Vector2(-15, -15))
+	_connect_joint(torso, arm_r, Vector2(15, -15))
+	_connect_joint(torso, leg_l, Vector2(-10, 20))
+	_connect_joint(torso, leg_r, Vector2(10, 20))
+
+func _make_limb(local_pos: Vector2, size: Vector2, mass: float, is_circle: bool = false) -> RigidBody2D:
+	var body := RigidBody2D.new()
+	body.position = local_pos
+	body.mass = mass
+	body.gravity_scale = 1.0
+	body.linear_damp = 0.5
+	body.angular_damp = 2.0
+	body.contact_monitor = true
+	body.max_contacts_reported = 4
+	body.add_to_group("ragdoll_part")
+
+	var shape := CollisionShape2D.new()
+	if is_circle:
+		var c := CircleShape2D.new()
+		c.radius = size.x
+		shape.shape = c
+	else:
+		var r := RectangleShape2D.new()
+		r.size = size
+		shape.shape = r
+	body.add_child(shape)
+
+	var color_rect := ColorRect.new()
+	color_rect.color = player_color
+	color_rect.size = size
+	color_rect.position = -size / 2.0
+	body.add_child(color_rect)
+
+	add_child(body)
+	return body
+
+func _connect_joint(body_a: RigidBody2D, body_b: RigidBody2D, world_offset: Vector2) -> void:
+	var joint := PinJoint2D.new()
+	joint.position = body_a.position + world_offset
+	joint.node_a = body_a.get_path()
+	joint.node_b = body_b.get_path()
+	joint.softness = 0.05
+	add_child(joint)
 
 func _physics_process(_delta: float) -> void:
-	var scheme: Dictionary = INPUT_SCHEMES[player_index % INPUT_SCHEMES.size()]
+	if not torso:
+		return
+	_handle_movement()
+	_check_grounded()
 
-	var move := Input.get_action_strength(scheme["right"]) - Input.get_action_strength(scheme["left"])
-	torso.apply_central_force(Vector2(move * MOVE_FORCE, 0))
+func _handle_movement() -> void:
+	var dir := Vector2.ZERO
+	if Input.is_action_pressed("move_left"):
+		dir.x -= 1
+	if Input.is_action_pressed("move_right"):
+		dir.x += 1
 
-	if Input.is_action_just_pressed(scheme["jump"]) and ground_ray.is_colliding():
-		torso.apply_central_impulse(Vector2(0, -JUMP_IMPULSE))
+	if dir.length() > 0:
+		torso.apply_central_force(dir.normalized() * move_force)
+		# 다리도 같이 밀어줘서 걷는 느낌
+		leg_l.apply_central_force(dir.normalized() * move_force * 0.3)
+		leg_r.apply_central_force(dir.normalized() * move_force * 0.3)
 
-	if Input.is_action_just_pressed(scheme["grab"]):
+	if Input.is_action_just_pressed("jump") and is_grounded:
+		torso.apply_central_impulse(Vector2(0, -jump_impulse))
+
+	if Input.is_action_just_pressed("push"):
+		_push_nearby()
+
+	if Input.is_action_pressed("grab"):
 		_try_grab()
-	elif Input.is_action_just_released(scheme["grab"]):
+	else:
 		_release_grab()
 
-	if Input.is_action_just_pressed(scheme["punch"]):
-		_try_punch()
+func _check_grounded() -> void:
+	# 간단한 접지 판정: 다리의 수직 속도가 낮으면 접지로 간주 (1차 버전, 추후 Raycast로 개선 권장)
+	is_grounded = abs(leg_l.linear_velocity.y) < 50 or abs(leg_r.linear_velocity.y) < 50
+
+func _push_nearby() -> void:
+	# 팔 위치 기준으로 근처 다른 플레이어 몸통에 임펄스 적용
+	var space_state := get_world_2d().direct_space_state
+	var query := PhysicsShapeQueryParameters2D.new()
+	var shape := CircleShape2D.new()
+	shape.radius = 40
+	query.shape = shape
+	query.transform = Transform2D(0, arm_r.global_position)
+	query.exclude = [self]
+	var results := space_state.intersect_shape(query)
+	for r in results:
+		var col = r["collider"]
+		if col is RigidBody2D and col.get_parent() != self:
+			var push_dir = (col.global_position - arm_r.global_position).normalized()
+			col.apply_central_impulse(push_dir * push_impulse)
 
 func _try_grab() -> void:
-	if _grab_joint:
+	if grabbed_body:
 		return
-	for body in get_tree().get_nodes_in_group("ragdoll_part"):
-		if body.get_parent() == self:
-			continue
-		if hand.global_position.distance_to(body.global_position) <= GRAB_RANGE:
-			_grab_joint = PinJoint2D.new()
-			add_child(_grab_joint)
-			_grab_joint.global_position = hand.global_position
-			_grab_joint.node_a = arm_r.get_path()
-			_grab_joint.node_b = body.get_path()
+	var space_state := get_world_2d().direct_space_state
+	var query := PhysicsShapeQueryParameters2D.new()
+	var shape := CircleShape2D.new()
+	shape.radius = 30
+	query.shape = shape
+	query.transform = Transform2D(0, arm_r.global_position)
+	query.exclude = [self]
+	var results := space_state.intersect_shape(query)
+	for r in results:
+		var col = r["collider"]
+		if col is RigidBody2D and col.get_parent() != self:
+			grabbed_body = col
+			grab_joint = PinJoint2D.new()
+			get_tree().current_scene.add_child(grab_joint)
+			grab_joint.global_position = arm_r.global_position
+			grab_joint.node_a = arm_r.get_path()
+			grab_joint.node_b = col.get_path()
 			break
 
 func _release_grab() -> void:
-	if _grab_joint:
-		_grab_joint.queue_free()
-		_grab_joint = null
+	if grab_joint:
+		grab_joint.queue_free()
+		grab_joint = null
+		grabbed_body = null
 
-func _try_punch() -> void:
-	for body in get_tree().get_nodes_in_group("ragdoll_part"):
-		if body.get_parent() == self:
-			continue
-		var dist := hand.global_position.distance_to(body.global_position)
-		if dist <= PUNCH_RANGE:
-			var dir := (body.global_position - hand.global_position).normalized()
-			body.apply_central_impulse(dir * PUNCH_IMPULSE)
+func eliminate() -> void:
+	# 낙사존 진입 시 Stage.gd에서 호출됨. 1차 버전은 리스폰만 처리.
+	print(name, " 탈락!")
+	_respawn(Vector2(0, -100))
+
+func _respawn(new_pos: Vector2) -> void:
+	position = new_pos
+	for limb in [torso, head, arm_l, arm_r, leg_l, leg_r]:
+		if limb:
+			limb.linear_velocity = Vector2.ZERO
+			limb.angular_velocity = 0.0

@@ -14,6 +14,6 @@ func _on_death_zone_body_entered(body: Node) -> void:
 	if not body.is_in_group("ragdoll_part"):
 		return
 	var player := body.get_parent()
-	if player:
+	if player is Player:
 		player_eliminated.emit(player)
-		player.queue_free()
+		player.eliminate()
