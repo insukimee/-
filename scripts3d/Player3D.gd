@@ -10,11 +10,13 @@ class_name Player3D
 @export var push_impulse: float = 7.0
 @export var player_color: Color = Color(0.9, 0.3, 0.3)
 
-## 몸통/다리를 세워두는 복원 토크(PD 제어). 팔은 제외해서 랙돌 느낌 유지.
-@export var torso_balance_stiffness: float = 60.0
-@export var torso_balance_damping: float = 8.0
-@export var leg_balance_stiffness: float = 20.0
-@export var leg_balance_damping: float = 4.0
+## 몸통/다리를 세워두는 복원 로직. 토크가 아니라 angular_velocity를 직접
+## 보정하는 방식이라 질량/관성 값과 무관하게 항상 일정하게 작동한다.
+## 팔은 제외해서 랙돌 느낌 유지.
+@export var torso_correction_speed: float = 10.0
+@export var torso_max_angular_velocity: float = 14.0
+@export var leg_correction_speed: float = 7.0
+@export var leg_max_angular_velocity: float = 12.0
 
 var torso: RigidBody3D
 var head: RigidBody3D
@@ -188,18 +190,23 @@ func _physics_process(delta: float) -> void:
 		_push_nearby()
 
 func _apply_balance() -> void:
-	# 몸통/다리가 세워져 있도록 복원 토크를 건다. 이게 없으면 PinJoint3D는
-	# 자유 회전 관절이라 스폰 직후 바로 주저앉고, 다리도 몸통 아래가 아니라
-	# 아무 방향으로나 널브러져서 접지 레이가 땅을 찾지 못하게 된다.
-	_balance_body(torso, torso_balance_stiffness, torso_balance_damping)
-	_balance_body(leg_l, leg_balance_stiffness, leg_balance_damping)
-	_balance_body(leg_r, leg_balance_stiffness, leg_balance_damping)
+	# 몸통/다리가 세워져 있도록 angular_velocity를 직접 보정한다. 이게 없으면
+	# PinJoint3D는 자유 회전 관절이라 스폰 직후 바로 주저앉고, 다리도 몸통
+	# 아래가 아니라 아무 방향으로나 널브러져서 접지 레이가 땅을 찾지 못한다.
+	_balance_body(torso, torso_correction_speed, torso_max_angular_velocity)
+	_balance_body(leg_l, leg_correction_speed, leg_max_angular_velocity)
+	_balance_body(leg_r, leg_correction_speed, leg_max_angular_velocity)
 
-func _balance_body(body: RigidBody3D, stiffness: float, damping: float) -> void:
+func _balance_body(body: RigidBody3D, correction_speed: float, max_angular_velocity: float) -> void:
+	# 토크 대신 angular_velocity를 직접 목표값으로 블렌딩한다.
+	# (질량/관성에 따라 필요한 토크 크기가 달라지는 문제를 피하기 위함)
 	var current_up: Vector3 = body.global_transform.basis.y
-	var torque_dir: Vector3 = current_up.cross(Vector3.UP)
-	var torque: Vector3 = torque_dir * stiffness - body.angular_velocity * damping
-	body.apply_torque(torque)
+	var axis: Vector3 = current_up.cross(Vector3.UP)
+	var angle: float = current_up.angle_to(Vector3.UP)
+	var desired := Vector3.ZERO
+	if axis.length() > 0.0001:
+		desired = axis.normalized() * clamp(angle * correction_speed, -max_angular_velocity, max_angular_velocity)
+	body.angular_velocity = body.angular_velocity.lerp(desired, 0.4)
 
 func _update_jump_timers(delta: float) -> void:
 	if is_grounded:
