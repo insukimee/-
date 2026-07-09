@@ -132,22 +132,29 @@ func _connect_joint(a: RigidBody3D, b: RigidBody3D, world_offset: Vector3) -> vo
 	add_child(joint)
 
 func _setup_ground_rays() -> void:
-	_ground_ray_l = _make_ground_ray(leg_l)
-	_ground_ray_r = _make_ground_ray(leg_r)
+	# Player 루트(회전하지 않음)에 붙이고 매 프레임 다리 위치로 옮겨서 사용한다.
+	# 다리의 자식으로 붙이면 다리가 넘어질 때 "아래" 방향 레이가 같이 돌아가서
+	# 땅을 못 가리키는 문제가 있었다 (2D Player.gd와 동일한 원인).
+	_ground_ray_l = _make_ground_ray()
+	_ground_ray_r = _make_ground_ray()
 	for limb in [torso, head, arm_l, arm_r, leg_l, leg_r]:
 		_ground_ray_l.add_exception(limb)
 		_ground_ray_r.add_exception(limb)
 
-func _make_ground_ray(leg: RigidBody3D) -> RayCast3D:
+func _make_ground_ray() -> RayCast3D:
 	var ray := RayCast3D.new()
 	ray.target_position = Vector3(0, -0.35, 0)
-	leg.add_child(ray)
+	add_child(ray)
 	return ray
 
 func _physics_process(delta: float) -> void:
 	if not torso:
 		return
 
+	_ground_ray_l.global_position = leg_l.global_position
+	_ground_ray_r.global_position = leg_r.global_position
+	_ground_ray_l.force_raycast_update()
+	_ground_ray_r.force_raycast_update()
 	is_grounded = _ground_ray_l.is_colliding() or _ground_ray_r.is_colliding()
 	_update_jump_timers(delta)
 

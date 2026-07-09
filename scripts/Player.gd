@@ -101,19 +101,20 @@ func _connect_joint(body_a: RigidBody2D, body_b: RigidBody2D, world_offset: Vect
 
 func _setup_ground_rays() -> void:
 	# 다리 밑으로 짧은 레이캐스트를 쏴서 접지를 판정한다.
-	# (다리 수직 속도 기반 판정은 랙돌 물리 지터로 인해 대부분 false가 되어
-	#  스페이스바를 여러 번 눌러야 겨우 점프가 되는 문제가 있었음)
-	_ground_ray_l = _make_ground_ray(leg_l)
-	_ground_ray_r = _make_ground_ray(leg_r)
+	# Player 루트(회전하지 않음)에 붙이고 매 프레임 다리 위치로 옮겨서 사용한다.
+	# 다리 자체의 자식으로 붙이면 다리가 넘어질 때(랙돌 특성상 거의 항상 그럼)
+	# "아래" 방향 레이가 다리 회전을 따라 같이 돌아가서 땅을 못 가리키는 문제가 있었다.
+	_ground_ray_l = _make_ground_ray()
+	_ground_ray_r = _make_ground_ray()
 	for limb in [torso, head, arm_l, arm_r, leg_l, leg_r]:
 		_ground_ray_l.add_exception(limb)
 		_ground_ray_r.add_exception(limb)
 
-func _make_ground_ray(leg: RigidBody2D) -> RayCast2D:
+func _make_ground_ray() -> RayCast2D:
 	var ray := RayCast2D.new()
 	ray.target_position = Vector2(0, 20)
 	ray.collision_mask = 1
-	leg.add_child(ray)
+	add_child(ray)
 	return ray
 
 func _physics_process(delta: float) -> void:
@@ -158,6 +159,10 @@ func _handle_movement() -> void:
 		_release_grab()
 
 func _check_grounded() -> void:
+	_ground_ray_l.global_position = leg_l.global_position
+	_ground_ray_r.global_position = leg_r.global_position
+	_ground_ray_l.force_raycast_update()
+	_ground_ray_r.force_raycast_update()
 	is_grounded = _ground_ray_l.is_colliding() or _ground_ray_r.is_colliding()
 
 func _update_jump_timers(delta: float) -> void:
