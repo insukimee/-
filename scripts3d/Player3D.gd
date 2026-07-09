@@ -17,8 +17,14 @@ var arm_r: RigidBody3D
 var leg_l: RigidBody3D
 var leg_r: RigidBody3D
 
+const COYOTE_TIME := 0.15
+const JUMP_BUFFER_TIME := 0.15
+
 var is_grounded: bool = false
-var _ground_ray: RayCast3D
+var _ground_ray_l: RayCast3D
+var _ground_ray_r: RayCast3D
+var _coyote_timer: float = 0.0
+var _jump_buffer_timer: float = 0.0
 
 func _ready() -> void:
 	_build_ragdoll()
@@ -45,7 +51,7 @@ func _build_ragdoll() -> void:
 	_add_joint_cover(Vector3(0.2, -0.45, 0), 0.15)
 
 	_add_face()
-	_setup_ground_ray()
+	_setup_ground_rays()
 
 func _make_limb(local_pos: Vector3, radius: float, height: float, mass: float, is_sphere: bool = false) -> RigidBody3D:
 	var body := RigidBody3D.new()
@@ -125,18 +131,25 @@ func _connect_joint(a: RigidBody3D, b: RigidBody3D, world_offset: Vector3) -> vo
 	joint.set_param(PinJoint3D.PARAM_DAMPING, 1.2)
 	add_child(joint)
 
-func _setup_ground_ray() -> void:
-	_ground_ray = RayCast3D.new()
-	_ground_ray.target_position = Vector3(0, -0.35, 0)
-	leg_l.add_child(_ground_ray)
+func _setup_ground_rays() -> void:
+	_ground_ray_l = _make_ground_ray(leg_l)
+	_ground_ray_r = _make_ground_ray(leg_r)
 	for limb in [torso, head, arm_l, arm_r, leg_l, leg_r]:
-		_ground_ray.add_exception(limb)
+		_ground_ray_l.add_exception(limb)
+		_ground_ray_r.add_exception(limb)
 
-func _physics_process(_delta: float) -> void:
+func _make_ground_ray(leg: RigidBody3D) -> RayCast3D:
+	var ray := RayCast3D.new()
+	ray.target_position = Vector3(0, -0.35, 0)
+	leg.add_child(ray)
+	return ray
+
+func _physics_process(delta: float) -> void:
 	if not torso:
 		return
 
-	is_grounded = _ground_ray.is_colliding()
+	is_grounded = _ground_ray_l.is_colliding() or _ground_ray_r.is_colliding()
+	_update_jump_timers(delta)
 
 	var dir := 0.0
 	if Input.is_action_pressed("p1_move_left"):
@@ -148,11 +161,23 @@ func _physics_process(_delta: float) -> void:
 		leg_l.apply_central_force(Vector3(dir * move_force * 0.3, 0, 0))
 		leg_r.apply_central_force(Vector3(dir * move_force * 0.3, 0, 0))
 
-	if Input.is_action_just_pressed("p1_jump") and is_grounded:
+	if Input.is_action_just_pressed("p1_jump"):
+		_jump_buffer_timer = JUMP_BUFFER_TIME
+
+	if _jump_buffer_timer > 0.0 and _coyote_timer > 0.0:
 		torso.apply_central_impulse(Vector3(0, jump_impulse, 0))
+		_jump_buffer_timer = 0.0
+		_coyote_timer = 0.0
 
 	if Input.is_action_just_pressed("p1_push"):
 		_push_nearby()
+
+func _update_jump_timers(delta: float) -> void:
+	if is_grounded:
+		_coyote_timer = COYOTE_TIME
+	else:
+		_coyote_timer = max(_coyote_timer - delta, 0.0)
+	_jump_buffer_timer = max(_jump_buffer_timer - delta, 0.0)
 
 func _push_nearby() -> void:
 	var space_state := get_world_3d().direct_space_state

@@ -23,12 +23,17 @@ var arm_r: RigidBody2D
 var leg_l: RigidBody2D
 var leg_r: RigidBody2D
 
+const COYOTE_TIME := 0.15  # 발이 막 떨어져도 잠깐은 점프를 허용
+const JUMP_BUFFER_TIME := 0.15  # 착지 살짝 전에 눌러도 점프가 예약되도록
+
 var is_grounded: bool = false
 var is_out: bool = false
 var grabbed_body: RigidBody2D = null
 var grab_joint: PinJoint2D = null
 var _ground_ray_l: RayCast2D
 var _ground_ray_r: RayCast2D
+var _coyote_timer: float = 0.0
+var _jump_buffer_timer: float = 0.0
 
 func _ready() -> void:
 	_build_ragdoll()
@@ -111,11 +116,12 @@ func _make_ground_ray(leg: RigidBody2D) -> RayCast2D:
 	leg.add_child(ray)
 	return ray
 
-func _physics_process(_delta: float) -> void:
+func _physics_process(delta: float) -> void:
 	if not torso or is_out:
 		return
-	_handle_movement()
 	_check_grounded()
+	_update_jump_timers(delta)
+	_handle_movement()
 
 func _action(action_name: String) -> String:
 	# device_id 0 = 1P 입력 스킴, 1 = 2P 입력 스킴 (project.godot의 p1_*/p2_* 액션)
@@ -134,9 +140,14 @@ func _handle_movement() -> void:
 		leg_l.apply_central_force(dir.normalized() * move_force * 0.3)
 		leg_r.apply_central_force(dir.normalized() * move_force * 0.3)
 
-	if Input.is_action_just_pressed(_action("jump")) and is_grounded:
+	if Input.is_action_just_pressed(_action("jump")):
+		_jump_buffer_timer = JUMP_BUFFER_TIME
+
+	if _jump_buffer_timer > 0.0 and _coyote_timer > 0.0:
 		torso.apply_central_impulse(Vector2(0, -jump_impulse))
 		SoundFX.play_jump()
+		_jump_buffer_timer = 0.0
+		_coyote_timer = 0.0
 
 	if Input.is_action_just_pressed(_action("push")):
 		_push_nearby()
@@ -148,6 +159,13 @@ func _handle_movement() -> void:
 
 func _check_grounded() -> void:
 	is_grounded = _ground_ray_l.is_colliding() or _ground_ray_r.is_colliding()
+
+func _update_jump_timers(delta: float) -> void:
+	if is_grounded:
+		_coyote_timer = COYOTE_TIME
+	else:
+		_coyote_timer = max(_coyote_timer - delta, 0.0)
+	_jump_buffer_timer = max(_jump_buffer_timer - delta, 0.0)
 
 func _push_nearby() -> void:
 	# 팔 위치 기준으로 근처 다른 플레이어 몸통에 임펄스 적용
