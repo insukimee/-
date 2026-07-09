@@ -146,7 +146,7 @@ func _balance_body(body: RigidBody2D, correction_speed: float, max_angular_veloc
 	# 토크 대신 angular_velocity를 직접 목표값으로 블렌딩한다.
 	# (질량/관성에 따라 필요한 토크 크기가 달라지는 문제를 피하기 위함)
 	var rotation_error := wrapf(-body.rotation, -PI, PI)
-	var desired := clamp(rotation_error * correction_speed, -max_angular_velocity, max_angular_velocity)
+	var desired: float = clamp(rotation_error * correction_speed, -max_angular_velocity, max_angular_velocity)
 	body.angular_velocity = lerp(body.angular_velocity, desired, 0.4)
 
 func _action(action_name: String) -> String:
