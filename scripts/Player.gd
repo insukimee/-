@@ -14,6 +14,13 @@ const RAGDOLL_VISUAL_SCRIPT := preload("res://scripts/RagdollVisual.gd")
 @export var device_id: int = 0  # 로컬 멀티용: 0=키보드, 1=패드1 등
 @export var lives: int = 1  # 낙사존에 이 횟수만큼 떨어지면 완전 탈락 (기본 1: 즉시 탈락)
 
+## 몸통/다리를 세워두는 복원력(PD 제어). 값을 키우면 더 꼿꼿하게 서고,
+## 줄이면 더 흐물흐물해진다. 팔은 일부러 제외해서 랙돌 느낌은 유지.
+@export var torso_balance_stiffness: float = 26000.0
+@export var torso_balance_damping: float = 1600.0
+@export var leg_balance_stiffness: float = 9000.0
+@export var leg_balance_damping: float = 700.0
+
 signal went_out(player: Player)
 
 var torso: RigidBody2D
@@ -120,9 +127,23 @@ func _make_ground_ray() -> RayCast2D:
 func _physics_process(delta: float) -> void:
 	if not torso or is_out:
 		return
+	_apply_balance()
 	_check_grounded()
 	_update_jump_timers(delta)
 	_handle_movement()
+
+func _apply_balance() -> void:
+	# 몸통과 다리에 "똑바로 서려는" 토크를 걸어준다. 액티브 랙돌 없이 PinJoint2D만
+	# 쓰면 자유롭게 회전하는 관절 특성상 스폰하자마자 힘없이 주저앉아버리고,
+	# 다리도 몸통 아래가 아니라 아무 데나 널브러져서 접지 판정 자체가 불가능해진다.
+	_balance_body(torso, torso_balance_stiffness, torso_balance_damping)
+	_balance_body(leg_l, leg_balance_stiffness, leg_balance_damping)
+	_balance_body(leg_r, leg_balance_stiffness, leg_balance_damping)
+
+func _balance_body(body: RigidBody2D, stiffness: float, damping: float) -> void:
+	var rotation_error := wrapf(-body.rotation, -PI, PI)
+	var torque := rotation_error * stiffness - body.angular_velocity * damping
+	body.apply_torque(torque)
 
 func _action(action_name: String) -> String:
 	# device_id 0 = 1P 입력 스킴, 1 = 2P 입력 스킴 (project.godot의 p1_*/p2_* 액션)

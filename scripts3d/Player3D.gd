@@ -10,6 +10,12 @@ class_name Player3D
 @export var push_impulse: float = 7.0
 @export var player_color: Color = Color(0.9, 0.3, 0.3)
 
+## 몸통/다리를 세워두는 복원 토크(PD 제어). 팔은 제외해서 랙돌 느낌 유지.
+@export var torso_balance_stiffness: float = 60.0
+@export var torso_balance_damping: float = 8.0
+@export var leg_balance_stiffness: float = 20.0
+@export var leg_balance_damping: float = 4.0
+
 var torso: RigidBody3D
 var head: RigidBody3D
 var arm_l: RigidBody3D
@@ -151,6 +157,8 @@ func _physics_process(delta: float) -> void:
 	if not torso:
 		return
 
+	_apply_balance()
+
 	_ground_ray_l.global_position = leg_l.global_position
 	_ground_ray_r.global_position = leg_r.global_position
 	_ground_ray_l.force_raycast_update()
@@ -178,6 +186,20 @@ func _physics_process(delta: float) -> void:
 
 	if Input.is_action_just_pressed("p1_push"):
 		_push_nearby()
+
+func _apply_balance() -> void:
+	# 몸통/다리가 세워져 있도록 복원 토크를 건다. 이게 없으면 PinJoint3D는
+	# 자유 회전 관절이라 스폰 직후 바로 주저앉고, 다리도 몸통 아래가 아니라
+	# 아무 방향으로나 널브러져서 접지 레이가 땅을 찾지 못하게 된다.
+	_balance_body(torso, torso_balance_stiffness, torso_balance_damping)
+	_balance_body(leg_l, leg_balance_stiffness, leg_balance_damping)
+	_balance_body(leg_r, leg_balance_stiffness, leg_balance_damping)
+
+func _balance_body(body: RigidBody3D, stiffness: float, damping: float) -> void:
+	var current_up: Vector3 = body.global_transform.basis.y
+	var torque_dir: Vector3 = current_up.cross(Vector3.UP)
+	var torque: Vector3 = torque_dir * stiffness - body.angular_velocity * damping
+	body.apply_torque(torque)
 
 func _update_jump_timers(delta: float) -> void:
 	if is_grounded:
