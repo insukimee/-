@@ -15,7 +15,7 @@ var _shake_strength: float = 0.0
 func _ready() -> void:
 	add_to_group("camera_rig")
 	position_smoothing_enabled = false
-	current = true
+	enabled = true
 
 func _process(delta: float) -> void:
 	_follow_players(delta)
