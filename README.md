@@ -46,6 +46,20 @@
 python3 generate.py   # ko/ ja/ 의 모든 HTML과 sitemap.xml 재생성
 ```
 
+## Shorts 대본 초안 생성
+
+`generate.py`의 티커 데이터를 YouTube Shorts 보이스 가이드 템플릿(훅 → 상황설명 →
+인사이트 → 결론 → 클로징)에 채워 `shorts/<slug>.md` 초안을 만듭니다.
+
+```bash
+python3 generate_shorts.py            # 전체 23개 종목
+python3 generate_shorts.py --ticker NVDA   # 특정 종목만
+```
+
+생성된 대본은 `generate.py`의 정식 분석 문구를 그대로 가져온 재료 상태이므로,
+촬영 전 가이드의 4대 원칙(번역체·확률적 표현·구어체 등)에 맞춰 다듬어야 합니다.
+각 파일 하단 체크리스트와 예상 길이(45~60초 목표)로 다듬을 지점을 확인하세요.
+
 ## 로컬 실행
 
 ```bash
