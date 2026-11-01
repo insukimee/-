@@ -2,7 +2,7 @@
 """Static site generator for MarketInsight (US-market focus, KO + JA)."""
 import os
 
-SITE = "https://insukimee.github.io/-"
+SITE = "https://usmarketinsight.com"
 
 # ---------------------------------------------------------------- AdSense config
 # TODO(owner): replace with your real AdSense publisher ID (keep the "ca-" prefix).
@@ -141,6 +141,7 @@ def tv_tape(locale):
 def head(lang, title, desc, slug, other_slug):
     other = OTHER[lang]
     canonical = f"{SITE}/{lang}/{slug}"
+    other_canonical = f"{SITE}/{other}/{other_slug}"
     return f"""<!DOCTYPE html>
 <html lang="{lang}">
 <head>
@@ -156,8 +157,8 @@ def head(lang, title, desc, slug, other_slug):
   <meta property="og:site_name" content="{LOGO[lang]}">
   <meta property="og:url" content="{canonical}">
   <link rel="canonical" href="{canonical}">
-  <link rel="alternate" hreflang="{lang}" href="{slug}">
-  <link rel="alternate" hreflang="{other}" href="../{other}/{other_slug}">
+  <link rel="alternate" hreflang="{lang}" href="{canonical}">
+  <link rel="alternate" hreflang="{other}" href="{other_canonical}">
   <link rel="stylesheet" href="../css/style.css">
   <link rel="manifest" href="../manifest.webmanifest">
   <meta name="theme-color" content="#0D0D0D">
@@ -1053,13 +1054,13 @@ def static_page(lang, slug, title, desc, body):
 
 
 def render_root_index():
-    return """<!DOCTYPE html>
+    return f"""<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="refresh" content="0; url=ko/index.html">
   <title>MarketInsight</title>
-  <link rel="canonical" href="ko/index.html">
+  <link rel="canonical" href="{SITE}/ko/index.html">
 </head>
 <body>
   <p>Redirecting… <a href="ko/index.html">Click here if not redirected</a></p>
