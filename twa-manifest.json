@@ -1,6 +1,6 @@
 {
   "packageId": "io.github.insukimee.marketinsight",
-  "host": "insukimee.github.io",
+  "host": "usmarketinsight.com",
   "name": "마켓인사이트",
   "launcherName": "마켓인사이트",
   "display": "standalone",
@@ -12,12 +12,12 @@
   "navigationDividerColor": "#0D0D0D",
   "navigationDividerColorDark": "#0D0D0D",
   "backgroundColor": "#0D0D0D",
-  "startUrl": "/-/ko/index.html",
-  "iconUrl": "https://insukimee.github.io/-/icons/icon-512.png",
-  "maskableIconUrl": "https://insukimee.github.io/-/icons/maskable-512.png",
+  "startUrl": "/ko/index.html",
+  "iconUrl": "https://usmarketinsight.com/icons/icon-512.png",
+  "maskableIconUrl": "https://usmarketinsight.com/icons/maskable-512.png",
   "appVersion": "1.0.0",
   "appVersionCode": 1,
-  "webManifestUrl": "https://insukimee.github.io/-/manifest.webmanifest",
+  "webManifestUrl": "https://usmarketinsight.com/manifest.webmanifest",
   "fallbackType": "customtabs",
   "enableNotifications": false,
   "features": {},
@@ -25,5 +25,5 @@
     "path": "./android.keystore",
     "alias": "android"
   },
-  "_comment": "Starter config for @bubblewrap/cli. Run `bubblewrap init --manifest https://insukimee.github.io/-/manifest.webmanifest` to generate a fresh one, or use this as a reference. See STORE_PUBLISHING.md."
+  "_comment": "Starter config for @bubblewrap/cli. Run `bubblewrap init --manifest https://usmarketinsight.com/manifest.webmanifest` to generate a fresh one, or use this as a reference. See STORE_PUBLISHING.md. startUrl is root-relative because Bubblewrap joins it to host; the website itself uses relative links."
 }

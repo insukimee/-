@@ -58,7 +58,7 @@ python3 -m http.server 8000
 `main` 브랜치에 푸시하면 `.github/workflows/deploy.yml` 이 GitHub Pages로 자동 배포합니다.
 (저장소 Settings → Pages → Source: GitHub Actions 가 설정되어 있어야 함)
 
-라이브 주소: `https://insukimee.github.io/-/`
+라이브 주소: `https://usmarketinsight.com/`
 
 ## 면책
 
