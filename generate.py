@@ -38,8 +38,9 @@ NAV = {
     ],
 }
 LOGO = {"ko": "마켓인사이트", "ja": "マーケットインサイト"}
-# Accessible name is in the target language on purpose (ko pages say 日本語に切り替え).
-LANG_SWITCH = {"ko": ("🌐 JP", "日本語に切り替え"), "ja": ("🌐 KR", "한국어로 전환")}
+# ja pages name the switch in Japanese so published HTML has no Hangul.
+# ko pages keep the Japanese accessible name (日本語に切り替え).
+LANG_SWITCH = {"ko": ("🌐 JP", "日本語に切り替え"), "ja": ("🌐 KR", "韓国語に切り替え")}
 OTHER = {"ko": "ja", "ja": "ko"}
 HAMBURGER_LABEL = {"ko": "메뉴 열기", "ja": "メニューを開く"}
 BODY_CLASS = {"ko": "", "ja": " class=\"lang-ja\""}
@@ -60,7 +61,7 @@ FOOTER = {
         "info": "情報",
         "links2": [("about.html", "サイト紹介"), ("contact.html", "お問い合わせ"),
                    ("privacy-policy.html", "プライバシーポリシー"), ("terms.html", "利用規約")],
-        "copy": "© 2026 マーケットインサイト. All rights reserved.",
+        "copy": "© 2026 マーケットインサイト. 無断転載を禁じます。",
         "disc": "当サイトの情報は投資勧誘ではありません。投資判断の最終決定はご自身の責任で行ってください。",
     },
 }
@@ -84,7 +85,7 @@ SECTORS = {
     "cyber": ("사이버보안", "サイバーセキュリティ"),
     "space": ("우주·방산", "宇宙・防衛"),
     "energy": ("클린에너지·전력", "クリーンエネルギー・電力"),
-    "ev": ("전기차", "EV"),
+    "ev": ("전기차", "電気自動車"),
     "fintech": ("핀테크", "フィンテック"),
     "gaming": ("게임", "ゲーム"),
 }
@@ -142,10 +143,22 @@ def tv_tape(locale):
 def head(lang, title, desc, slug, other_slug):
     other = OTHER[lang]
     canonical = f"{SITE}/{lang}/{slug}"
+    # Japanese pages opt out of browser auto-translation and use their own manifest.
+    # x-default follows the existing relative hreflang to the Korean page (site default).
+    if lang == "ja":
+        html_tag = '<html lang="ja" translate="no">'
+        extra_meta = '\n  <meta name="google" content="notranslate">'
+        manifest = "../manifest.ja.webmanifest"
+        xdefault = f'\n  <link rel="alternate" hreflang="x-default" href="../{other}/{other_slug}">'
+    else:
+        html_tag = f'<html lang="{lang}">'
+        extra_meta = ""
+        manifest = "../manifest.webmanifest"
+        xdefault = ""
     return f"""<!DOCTYPE html>
-<html lang="{lang}">
+{html_tag}
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8">{extra_meta}
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
   <title>{title}</title>
   <meta name="description" content="{desc}">
@@ -158,9 +171,9 @@ def head(lang, title, desc, slug, other_slug):
   <meta property="og:url" content="{canonical}">
   <link rel="canonical" href="{canonical}">
   <link rel="alternate" hreflang="{lang}" href="{slug}">
-  <link rel="alternate" hreflang="{other}" href="../{other}/{other_slug}">
+  <link rel="alternate" hreflang="{other}" href="../{other}/{other_slug}">{xdefault}
   <link rel="stylesheet" href="../css/style.css">
-  <link rel="manifest" href="../manifest.webmanifest">
+  <link rel="manifest" href="{manifest}">
   <meta name="theme-color" content="#0D0D0D">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -1061,16 +1074,40 @@ def static_page(lang, slug, title, desc, body):
 
 
 def render_root_index():
+    # Language gate: stored choice, else the first navigator.languages tag
+    # that starts with ja or ko, else Korean. Noscript falls back to ko.
     return """<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="refresh" content="0; url=ko/index.html">
   <title>MarketInsight</title>
-  <link rel="canonical" href="ko/index.html">
+  <link rel="canonical" href="https://insukimee.github.io/-/">
+  <link rel="alternate" hreflang="ja" href="https://insukimee.github.io/-/ja/index.html">
+  <link rel="alternate" hreflang="ko" href="https://insukimee.github.io/-/ko/index.html">
+  <link rel="alternate" hreflang="x-default" href="https://insukimee.github.io/-/">
+  <script>
+    (function () {
+      var lang = "ko";
+      try {
+        var saved = localStorage.getItem("mi_lang");
+        if (saved === "ja" || saved === "ko") {
+          lang = saved;
+        } else {
+          var list = navigator.languages || [navigator.language || ""];
+          for (var i = 0; i < list.length; i++) {
+            var tag = String(list[i] || "").toLowerCase();
+            if (tag.indexOf("ja") === 0) { lang = "ja"; break; }
+            if (tag.indexOf("ko") === 0) { lang = "ko"; break; }
+          }
+        }
+      } catch (_) {}
+      location.replace(lang + "/index.html");
+    })();
+  </script>
+  <noscript><meta http-equiv="refresh" content="0; url=ko/index.html"></noscript>
 </head>
 <body>
-  <p>Redirecting… <a href="ko/index.html">Click here if not redirected</a></p>
+  <p><a href="ja/index.html">日本語</a> / <a href="ko/index.html">한국어</a></p>
 </body>
 </html>
 """
@@ -1083,7 +1120,33 @@ def render_manifest():
   "description": "미국 증시 핵심 종목과 경제 흐름을 분석하는 투자 인사이트 앱",
   "lang": "ko",
   "dir": "ltr",
+  "id": "./ko/",
   "start_url": "./ko/index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0D0D0D",
+  "theme_color": "#0D0D0D",
+  "categories": ["finance", "news", "business"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
+"""
+
+
+def render_manifest_ja():
+    # Same icon paths as the Korean manifest: this file also lives at the site root.
+    return """{
+  "name": "マーケットインサイト · MarketInsight",
+  "short_name": "マーケットインサイト",
+  "description": "米国市場の主要銘柄と経済動向を分析する投資インサイトアプリ",
+  "lang": "ja",
+  "dir": "ltr",
+  "id": "./ja/",
+  "start_url": "./ja/index.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
@@ -1104,10 +1167,11 @@ def render_sw():
     shell = ["./", "./ko/index.html", "./ja/index.html",
              "./ko/stock-analysis.html", "./ja/stock-analysis.html",
              "./css/style.css", "./js/main.js",
-             "./icons/icon-192.png", "./icons/icon-512.png", "./manifest.webmanifest"]
+             "./icons/icon-192.png", "./icons/icon-512.png",
+             "./manifest.webmanifest", "./manifest.ja.webmanifest"]
     precache = ",\n  ".join(f'"{u}"' for u in shell)
     return f"""/* MarketInsight service worker */
-const CACHE = "mi-cache-v1";
+const CACHE = "mi-cache-v2";
 const SHELL = [
   {precache}
 ];
@@ -1140,7 +1204,7 @@ self.addEventListener("fetch", (e) => {{
         const copy = res.clone();
         caches.open(CACHE).then((c) => c.put(req, copy));
         return res;
-      }}).catch(() => caches.match(req).then((r) => r || caches.match("./ko/index.html")))
+      }}).catch(() => caches.match(req).then((r) => r || caches.match(url.pathname.indexOf('/ja/')>=0 ? './ja/index.html' : './ko/index.html')))
     );
     return;
   }}
@@ -1221,8 +1285,9 @@ def main():
     write("ads.txt", render_ads_txt())
     write("robots.txt", render_robots())
     write("manifest.webmanifest", render_manifest())
+    write("manifest.ja.webmanifest", render_manifest_ja())
     write("sw.js", render_sw())
-    print(f"Generated {len(TICKERS)} tickers x2 langs + structural pages + PWA (manifest/sw) + ads.txt/robots.txt.")
+    print(f"Generated {len(TICKERS)} tickers x2 langs + structural pages + PWA (manifests/sw) + ads.txt/robots.txt.")
 
 
 if __name__ == "__main__":
