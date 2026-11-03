@@ -2,7 +2,7 @@
   "name": "us-market-insight",
   "version": "1.0.0",
   "private": true,
-  "description": "US Market Insight Android app. applicationId is provisional until confirmed.",
+  "description": "US Market Insight Android and iOS app. The bundle id is provisional until confirmed.",
   "type": "module",
   "engines": {
     "node": ">=20"
@@ -12,7 +12,7 @@
     "build:www": "npm run build",
     "icons": "python3 scripts/gen-icons.py",
     "apply:native": "node scripts/apply-native-extras.mjs",
-    "cap:sync": "npm run build:www && npx cap sync android",
+    "cap:sync": "npm run build && npx cap sync",
     "test": "node --test test/pure.test.mjs && node scripts/build-www.mjs && node --test test/bundle.test.mjs",
     "android:debug": "npm run build:www && npx cap sync android && cd android && ./gradlew assembleDebug --no-daemon",
     "android:bundle": "npm run build:www && npx cap sync android && cd android && ./gradlew bundleRelease --no-daemon",
@@ -24,6 +24,7 @@
     "@capacitor/android": "8.6.0",
     "@capacitor/app": "8.1.2",
     "@capacitor/core": "8.6.0",
+    "@capacitor/ios": "8.6.0",
     "@capacitor/network": "8.0.1",
     "@capacitor/preferences": "8.0.1",
     "@capacitor/push-notifications": "8.1.3",

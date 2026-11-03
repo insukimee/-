@@ -15,7 +15,7 @@
 
 **선택: Capacitor. TWA는 대체합니다.** 웹사이트용 PWA(홈 화면 추가)는 그대로 둬도 됩니다. Play에 TWA 앱과 Capacitor 앱을 둘 다 올리면 사용자가 갈라지므로, 스토어 앱은 Capacitor 하나만 두는 쪽을 제안합니다. `twa-manifest.json`과 `STORE_PUBLISHING.md`는 이번 PR에서 지우지 않습니다. 스토어 경로의 본선은 `app/`입니다.
 
-iOS는 후속입니다. `capacitor.config.json`에 원격 `server.url`을 넣지 않아, 나중에 `npx cap add ios`를 해도 같은 로컬 `www/`를 씁니다. 이번 PR에서는 iOS 프로젝트를 만들지 않았습니다.
+Android를 먼저 올리고, iOS는 TestFlight로 시험을 앞당깁니다. `ios/`는 Capacitor 8의 Swift Package Manager 프로젝트입니다. 빌드와 업로드는 맥에서만 됩니다. 절차는 `IOS_TESTFLIGHT_KO.md`입니다.
 
 ## 2. 아키텍처
 
@@ -77,7 +77,7 @@ Play에 한 번 게시되면 `applicationId`는 바꿀 수 없습니다. 코드�
 | 최초 실행 고지, 정보 화면, 버전 | 구현됨 | 고지 버전 `2026-11-03`. 거부 대신 "확인하고 계속" |
 | ko/ja, 기기 언어로 시작 | 구현됨 | 저장값이 없으면 `ja`로 시작하는 언어만 일본어, 그 외 한국어 |
 | 아이콘·피처 그래픽 | 가안 | `scripts/gen-icons.py`. 사장님 확정 전 |
-| iOS | 후속 | 프로젝트 없음 |
+| iOS 프로젝트, 샘플 AdMob, ATT 문구, 푸시 엔타이틀먼트 | 코드 있음. Linux에서 컴파일하지 못함. 아이폰 실행은 미확인 |
 
 ## 6. 광고
 
@@ -119,7 +119,7 @@ AdMob 콘솔에서 도박 등 민감 카테고리를 막는 설정이 있습니�
 
 ## 7. 푸시
 
-안드로이드는 FCM이 본선입니다. iOS APNs는 후속이며, 같은 FCM 토픽을 나중에 APNs로 넘기는 구성이 가능합니다. 이번 코드는 Android만 연결합니다.
+안드로이드는 FCM이 본선입니다. iOS도 같은 토픽 이름을 쓰도록 JS를 맞춰 두었으나, Firebase iOS SDK는 아직 링크하지 않아 토픽 구독은 거절됩니다. 실수신은 APNs 키와 `GoogleService-Info.plist` 이후입니다. 자세한 표는 `IOS_TESTFLIGHT_KO.md`입니다.
 
 로컬 알림으로 "요일·시각"을 받지 않는 이유: 토픽 메시지는 구독자 전원에게 같은 시각에 나갑니다. 기기마다 다른 시각은 토큰을 서버에 저장하거나 로컬 알람이 필요합니다. 1차는 토큰 서버를 두지 않습니다.
 
@@ -190,7 +190,7 @@ Play 아이콘 요건(2026-11-03, [미리보기 애셋](https://support.google.c
 
 adaptive icon은 API 26+에서 원형·스퀴클 마스크에 잘립니다. 막대는 중앙 안전 영역 안에 두었습니다.
 
-1024 마스터는 이후 iOS 마케팅 아이콘의 원본으로 쓸 수 있습니다. iOS는 후속이라 App Store 아이콘 세트는 만들지 않았습니다.
+1024 마케팅 아이콘은 알파 없는 RGB PNG로 `resources/ios/AppIcon-1024.png`에 두었습니다. 도안은 가안입니다.
 
 도안은 가안입니다. 사장님 확정 전에는 스토어에 최종 자산으로 올리지 않습니다.
 
@@ -211,6 +211,6 @@ adaptive icon은 API 26+에서 원형·스퀴클 마스크에 잘립니다. 막�
 - TradingView 위젯은 온라인이면 제3자 콘텐츠라, 시세처럼 보일 수 있음. 고지 문단에 "실시간 시세 기능이 없고 위젯은 지연될 수 있음"을 넣었습니다.
 - 서명 키와 `google-services.json`을 커밋하면 안 됨. `.gitignore`에 넣어 두었습니다.
 
-## 12. 후속 (iOS)
+## 12. iOS
 
-이번 일정과 체크리스트는 Google Play만 다룹니다. iOS를 시작할 때 Apple Developer Program, 번들 ID, APNs, AdMob iOS 앱 ID, 1024 마케팅 아이콘, TestFlight를 별도 문서로 정리합니다. 지금 문서는 그 절차를 적지 않습니다.
+TestFlight 절차, 맥 명령, 심사 주의는 `IOS_TESTFLIGHT_KO.md`입니다. Linux에서는 프로젝트를 생성한 것까지이고, Xcode 빌드는 하지 못했습니다.

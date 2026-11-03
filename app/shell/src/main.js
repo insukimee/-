@@ -562,7 +562,8 @@ function registerPushListeners() {
 
 async function startAds() {
   const slot = document.getElementById('mi-admock');
-  const request = adUnitForRequest(state.config.ads);
+  const platform = Capacitor.getPlatform();
+  const request = adUnitForRequest(state.config.ads, platform);
   if (request.blocked) {
     if (slot) {
       slot.removeAttribute('hidden');
@@ -583,6 +584,13 @@ async function startAds() {
     if (!consent.canRequestAds) {
       if (slot) slot.setAttribute('hidden', '');
       return;
+    }
+    if (platform === 'ios') {
+      try {
+        await AdMob.requestTrackingAuthorization();
+      } catch {
+        /* ATT can be denied. Ads may still load without the advertising identifier. */
+      }
     }
     await AdMob.initialize({
       initializeForTesting: request.isTesting === true,

@@ -1,0 +1,2 @@
+CFBundleDisplayName = "US Market Insight";
+NSUserTrackingUsageDescription = "US Market Insight uses the device advertising identifier to show ads. You can refuse. The articles still open. This is not investment advice.";

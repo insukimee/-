@@ -1,6 +1,6 @@
 # 사장님 확인이 필요한 항목
 
-앱 표시 이름과 한국어·일본어 스토어 표시명 **US Market Insight**는 확정입니다. 한글 "마켓인사이트" 단독·유사 표기("US 마켓인사이트" 포함)는 앱 이름·스토어 이름에 쓰지 않습니다. 한국경제신문의 같은 이름 서비스와 혼동될 수 있습니다(2026-11-03: <https://marketinsight.hankyung.com/>, App Store <https://apps.apple.com/kr/app/id802681902>). 아래는 아직 열린 항목입니다.
+앱 표시 이름과 한국어·일본어 스토어 표시명 **US Market Insight**는 Android와 iOS 모두 확정입니다. 한글 "마켓인사이트" 단독·유사 표기("US 마켓인사이트" 포함)는 앱 이름·스토어 이름에 쓰지 않습니다. 한국경제신문의 같은 이름 서비스와 혼동될 수 있습니다(2026-11-03: <https://marketinsight.hankyung.com/>, App Store <https://apps.apple.com/kr/app/id802681902>). 아래는 아직 열린 항목입니다.
 
 1. **applicationId.** 코드는 `com.usmarketinsight.app` (1순위, 확정 전). 2순위 `com.usmarketinsight.android`, 3순위 `com.usmarketinsight.reader`. 기존 TWA 초안 `io.github.insukimee.marketinsight`와 비교는 `APP_PLAN_KO.md`. Play에 한 번 올리면 변경 불가. 이전에 Play에 그 ID로 앱을 만든 적이 있는지도 알려 주세요.
 2. **아이콘·피처 그래픽 확정.** `resources/play/`는 사이트와 같은 막대 도안의 가안입니다. 최종 파일을 주시면 교체합니다.
@@ -18,3 +18,6 @@
 14. **업로드 키스토어를 누가 보관하는지.** 저장소에는 넣지 않습니다.
 15. **앱 안 TradingView 위젯을 유지할지.** 온라인이면 제3자 차트라 시세 서비스처럼 보일 수 있습니다. 지금은 사이트와 동일하게 남겨 두었습니다.
 16. **대상 연령.** 아동용이 아니라는 전제로 두었습니다. 등급 설문 결과는 제출 때 IARC가 매깁니다.
+17. **Apple Developer Program.** 개인인지 조직인지. 가입과 연 99달러 결제는 사장님만 합니다. 승인 일수는 단정하지 않습니다.
+18. **APNs 인증키(.p8).** 사장님이 만들어 Firebase에 등록합니다. git에 넣지 않습니다.
+19. **아이패드 지원.** 현재 Xcode 타깃은 아이폰과 아이패드입니다. 아이패드를 빼면 13인치 스크린샷 의무가 달라질 수 있습니다. 확인 필요.

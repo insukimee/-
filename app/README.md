@@ -6,7 +6,7 @@
 
 `appId` `com.usmarketinsight.app`는 **1순위 후보**이며 Play에 게시하기 전에는 바꿀 수 있습니다. 게시 후에는 바꿀 수 없습니다. 확정 여부는 `app.config.json`의 `appIdConfirmed: false`를 보세요.
 
-iOS 프로젝트는 만들지 않았습니다. Capacitor 설정은 나중에 `npx cap add ios`를 할 수 있는 형태입니다. 그 명령은 이 단계에서 실행하지 마세요.
+iOS 프로젝트는 `ios/`에 있습니다. Capacitor 8은 Swift Package Manager를 기본으로 씁니다. 이 환경(Linux)에는 Xcode가 없어 빌드하지 못했습니다. 맥에서 열 명령과 TestFlight 절차는 `docs/IOS_TESTFLIGHT_KO.md`입니다.
 
 ## 요구 도구
 

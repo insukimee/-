@@ -97,6 +97,65 @@ def _write(path, data):
     print("wrote", os.path.relpath(path, ROOT))
 
 
+def _png_rgb(width, height, rgb):
+    def chunk(typ, data):
+        head = struct.pack(">I", len(data)) + typ + data
+        return head + struct.pack(">I", zlib.crc32(typ + data) & 0xFFFFFFFF)
+
+    raw = bytearray()
+    for y in range(height):
+        raw.append(0)
+        raw.extend(rgb[y * width * 3:(y + 1) * width * 3])
+    sig = b"\x89PNG\r\n\x1a\n"
+    ihdr = struct.pack(">IIBBBBB", width, height, 8, 2, 0, 0, 0)
+    return sig + chunk(b"IHDR", ihdr) + chunk(b"IDAT", zlib.compress(bytes(raw), 9)) + chunk(b"IEND", b"")
+
+
+def _rgba_to_rgb(width, height, rgba):
+    out = bytearray(width * height * 3)
+    for i in range(width * height):
+        src = i * 4
+        dst = i * 3
+        alpha = rgba[src + 3] / 255
+        for channel in range(3):
+            out[dst + channel] = int(rgba[src + channel] * alpha + BG[channel] * (1 - alpha))
+    return out
+
+
+def _draw_rgb(width, height, rounded=False, pad_ratio=0.22):
+    buf = bytearray(width * height * 4)
+    radius = int(min(width, height) * 0.22) if rounded else 0
+
+    def put(x, y, rgb, alpha=255):
+        if 0 <= x < width and 0 <= y < height:
+            i = (y * width + x) * 4
+            buf[i:i + 4] = bytes((rgb[0], rgb[1], rgb[2], alpha))
+
+    for y in range(height):
+        for x in range(width):
+            put(x, y, BG)
+    pad_x = width * pad_ratio
+    pad_y = height * pad_ratio
+    plot_l, plot_r = pad_x, width - pad_x
+    plot_b = height - pad_y
+    plot_h = plot_b - pad_y
+    plot_w = plot_r - plot_l
+    base_y = int(plot_b)
+    thickness = max(1, int(min(width, height) * 0.012))
+    for x in range(int(plot_l), int(plot_r)):
+        for t in range(thickness):
+            put(x, base_y + t, GOLD)
+    gap = plot_w * 0.10
+    bar_w = (plot_w - gap * 2) / 3
+    for index, height_ratio in enumerate((0.42, 0.68, 1.0)):
+        bx = plot_l + index * (bar_w + gap)
+        bar_h = plot_h * height_ratio
+        for x in range(int(bx), int(bx + bar_w)):
+            for y in range(int(plot_b - bar_h), int(plot_b)):
+                put(x, y, GREEN)
+    return _png_rgb(width, height, _rgba_to_rgb(width, height, buf))
+
+
 def main():
     _write(os.path.join(RES, "play", "icon-1024.png"), _draw(1024, 1024))
     _write(os.path.join(RES, "play", "icon-512.png"), _draw(512, 512))
@@ -149,6 +208,17 @@ def main():
     with open(color_path, "w", encoding="utf-8") as handle:
         handle.write(color)
     print("wrote", os.path.relpath(color_path, ROOT))
+
+    icon_1024 = _draw_rgb(1024, 1024, rounded=False, pad_ratio=0.2)
+    _write(os.path.join(RES, "ios", "AppIcon-1024.png"), icon_1024)
+    ios_icon = os.path.join(ROOT, "ios", "App", "App", "Assets.xcassets", "AppIcon.appiconset", "AppIcon-512@2x.png")
+    if os.path.isdir(os.path.dirname(ios_icon)):
+        _write(ios_icon, icon_1024)
+    splash = _draw_rgb(2732, 2732, rounded=False, pad_ratio=0.34)
+    splash_dir = os.path.join(ROOT, "ios", "App", "App", "Assets.xcassets", "Splash.imageset")
+    if os.path.isdir(splash_dir):
+        for name in ("splash-2732x2732.png", "splash-2732x2732-1.png", "splash-2732x2732-2.png"):
+            _write(os.path.join(splash_dir, name), splash)
 
 
 if __name__ == "__main__":

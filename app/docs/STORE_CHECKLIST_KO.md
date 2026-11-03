@@ -2,7 +2,7 @@
 
 US Market Insight Android 앱용입니다. 확인 날짜는 **2026-11-03**입니다. 각 링크는 그날 연 공식 페이지입니다. 숫자가 바뀌므로 제출 직전에 같은 URL을 다시 여세요. 페이지를 열지 못했거나 콘솔 화면의 칸 이름까지는 보지 못한 것은 **확인 필요**입니다.
 
-iOS는 이 목록의 범위가 아닙니다. 맨 아래 후속 절만 있습니다.
+이 문서의 본문은 Google Play입니다. iOS TestFlight와 App Store 문구는 `IOS_TESTFLIGHT_KO.md`, `store-listing/ios-ko.md`, `store-listing/ios-ja.md`입니다.
 
 담당: **사장님**은 계정·결제·법적 명의·최종 문구 승인·키 보관. **우리**는 초안, 빌드, 문서. 계정 생성·결제·제출·키 생성은 하지 않습니다.
 
@@ -207,6 +207,6 @@ Please review in Korean or Japanese. The first screen is the disclaimer.
 - [ ] 512 아이콘, 1024×500 피처 그래픽, 스크린샷 최소 2장(권장 4장, 1080×1920)
 - [ ] 광고 포함 = 예, Data safety, IARC, 금융 기능 선언
 
-## 13. 후속 (iOS)
+## 13. iOS
 
-iOS 체크리스트는 만들지 않습니다. Android 출시 뒤에 별도 문서로 둡니다.
+Android와 병행해 TestFlight 시험을 진행합니다. 계정·결제·제출은 사장님이 합니다. 체크리스트와 맥 명령은 `IOS_TESTFLIGHT_KO.md`에 있습니다. 앱 이름·부제는 각 30자입니다(2026-11-03, https://developer.apple.com/app-store/product-page/). 초안 이름은 US Market Insight(17자)입니다.

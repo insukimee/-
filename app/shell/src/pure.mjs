@@ -152,14 +152,19 @@ export function topicDiff(previous, next) {
   };
 }
 
-export function adUnitForRequest(ads) {
-  const testBanner = 'ca-app-pub-3940256099942544/6300978111';
-  const testApp = 'ca-app-pub-3940256099942544~3347511713';
+export function adUnitForRequest(ads, platform = 'android') {
+  const ios = platform === 'ios';
+  const testBanner = ios
+    ? 'ca-app-pub-3940256099942544/2934735716'
+    : 'ca-app-pub-3940256099942544/6300978111';
+  const testApp = ios
+    ? 'ca-app-pub-3940256099942544~1458002511'
+    : 'ca-app-pub-3940256099942544~3347511713';
   if (!ads || ads.useTestAds) {
     return {
-      adId: (ads && ads.androidTestBannerAdUnitId) || testBanner,
+      adId: (ios ? ads && ads.iosTestBannerAdUnitId : ads && ads.androidTestBannerAdUnitId) || testBanner,
       isTesting: true,
-      appId: (ads && ads.androidTestAppId) || testApp,
+      appId: (ios ? ads && ads.iosTestAppId : ads && ads.androidTestAppId) || testApp,
     };
   }
   const adId = ads.bannerAdUnitId || '';
