@@ -964,3 +964,8 @@ main {
   .container { padding: 0 var(--space-xl); }
   .post-content { padding: var(--space-2xl) var(--space-xl); }
 }
+
+/* Japanese pages only. body and form controls use var(--font-sans); :root still applies on ko. */
+:lang(ja) {
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Noto Sans JP', 'Yu Gothic', 'YuGothic', 'Meiryo', 'Segoe UI', Arial, sans-serif;
+}

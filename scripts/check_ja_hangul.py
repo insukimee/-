@@ -23,12 +23,9 @@ JA_DIR = ROOT / "ja"
 
 # Exact phrases kept on purpose. Keep each entry the full phrase, not a
 # short fragment, so accidental Hangul next to it still fails.
-ALLOWLIST = [
-    # Language switch on every ja page. The visible label is "🌐 KR".
-    # The accessible name is Korean on purpose, in the language being
-    # switched to (ko pages use aria-label="日本語に切り替え").
-    "한국어로 전환",
-]
+# Empty on purpose: the language-switch accessible name on ja pages is
+# Japanese ("韓国語に切り替え"), not Korean. ja/ must contain zero Hangul.
+ALLOWLIST = []
 
 HANGUL = re.compile(r"[\uac00-\ud7a3\u1100-\u11ff\u3130-\u318f]")
 

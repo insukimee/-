@@ -2,11 +2,33 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="refresh" content="0; url=ko/index.html">
   <title>MarketInsight</title>
-  <link rel="canonical" href="ko/index.html">
+  <link rel="canonical" href="https://insukimee.github.io/-/">
+  <link rel="alternate" hreflang="ja" href="https://insukimee.github.io/-/ja/index.html">
+  <link rel="alternate" hreflang="ko" href="https://insukimee.github.io/-/ko/index.html">
+  <link rel="alternate" hreflang="x-default" href="https://insukimee.github.io/-/">
+  <script>
+    (function () {
+      var lang = "ko";
+      try {
+        var saved = localStorage.getItem("mi_lang");
+        if (saved === "ja" || saved === "ko") {
+          lang = saved;
+        } else {
+          var list = navigator.languages || [navigator.language || ""];
+          for (var i = 0; i < list.length; i++) {
+            var tag = String(list[i] || "").toLowerCase();
+            if (tag.indexOf("ja") === 0) { lang = "ja"; break; }
+            if (tag.indexOf("ko") === 0) { lang = "ko"; break; }
+          }
+        }
+      } catch (_) {}
+      location.replace(lang + "/index.html");
+    })();
+  </script>
+  <noscript><meta http-equiv="refresh" content="0; url=ko/index.html"></noscript>
 </head>
 <body>
-  <p>Redirecting… <a href="ko/index.html">Click here if not redirected</a></p>
+  <p><a href="ja/index.html">日本語</a> / <a href="ko/index.html">한국어</a></p>
 </body>
 </html>

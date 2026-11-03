@@ -4,6 +4,7 @@
   "description": "미국 증시 핵심 종목과 경제 흐름을 분석하는 투자 인사이트 앱",
   "lang": "ko",
   "dir": "ltr",
+  "id": "./ko/",
   "start_url": "./ko/index.html",
   "scope": "./",
   "display": "standalone",

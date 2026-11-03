@@ -1,0 +1,20 @@
+{
+  "name": "マーケットインサイト · MarketInsight",
+  "short_name": "マーケットインサイト",
+  "description": "米国市場の主要銘柄と経済動向を分析する投資インサイトアプリ",
+  "lang": "ja",
+  "dir": "ltr",
+  "id": "./ja/",
+  "start_url": "./ja/index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0D0D0D",
+  "theme_color": "#0D0D0D",
+  "categories": ["finance", "news", "business"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

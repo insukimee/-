@@ -1,5 +1,5 @@
 /* MarketInsight service worker */
-const CACHE = "mi-cache-v1";
+const CACHE = "mi-cache-v2";
 const SHELL = [
   "./",
   "./ko/index.html",
@@ -10,7 +10,8 @@ const SHELL = [
   "./js/main.js",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
-  "./manifest.webmanifest"
+  "./manifest.webmanifest",
+  "./manifest.ja.webmanifest"
 ];
 
 self.addEventListener("install", (e) => {
@@ -41,7 +42,7 @@ self.addEventListener("fetch", (e) => {
         const copy = res.clone();
         caches.open(CACHE).then((c) => c.put(req, copy));
         return res;
-      }).catch(() => caches.match(req).then((r) => r || caches.match("./ko/index.html")))
+      }).catch(() => caches.match(req).then((r) => r || caches.match(url.pathname.indexOf('/ja/')>=0 ? './ja/index.html' : './ko/index.html')))
     );
     return;
   }

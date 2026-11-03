@@ -1,6 +1,8 @@
 (function () {
   'use strict';
 
+  try{var _l=(document.documentElement.lang||'').slice(0,2); if(_l==='ja'||_l==='ko') localStorage.setItem('mi_lang',_l);}catch(_){}
+
   // ── Hamburger / Mobile Nav ─────────────────────────────────────────────────
   const hamburger = document.getElementById('hamburger-btn');
   const mobileNav = document.getElementById('mobile-nav');
