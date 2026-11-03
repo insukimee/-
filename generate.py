@@ -38,6 +38,7 @@ NAV = {
     ],
 }
 LOGO = {"ko": "마켓인사이트", "ja": "マーケットインサイト"}
+# Accessible name is in the target language on purpose (ko pages say 日本語に切り替え).
 LANG_SWITCH = {"ko": ("🌐 JP", "日本語に切り替え"), "ja": ("🌐 KR", "한국어로 전환")}
 OTHER = {"ko": "ja", "ja": "ko"}
 HAMBURGER_LABEL = {"ko": "메뉴 열기", "ja": "メニューを開く"}
@@ -288,11 +289,16 @@ def comments(lang, identifier, url):
 # ---------------------------------------------------------------- ticker data
 # order: slug, symbol, sector, exchange, name_ko, name_ja, date
 # content: lead_ko, lead_ja, then 4 (body_ko, body_ja) for the fixed sections
+# `exch` is shared (NASDAQ, NYSE, …). Pass exch_ja when the venue label
+# itself is translated — a single Korean string would otherwise be copied
+# onto the Japanese page. Do not re-run main() just to refresh one label;
+# daily news is edited into the HTML and a full regenerate wipes it.
 TICKERS = []
 
 
-def add(slug, sym, sector, exch, nko, nja, date, lead_ko, lead_ja, bodies):
+def add(slug, sym, sector, exch, nko, nja, date, lead_ko, lead_ja, bodies, exch_ja=None):
     TICKERS.append(dict(slug=slug, sym=sym, sector=sector, exch=exch,
+                        exch_ja=exch if exch_ja is None else exch_ja,
                         nko=nko, nja=nja, date=date, lead_ko=lead_ko,
                         lead_ja=lead_ja, bodies=bodies))
 
@@ -477,7 +483,8 @@ add("spcx", "SPCX", "space", "신규 상장 (2026.06.12 IPO)", "스페이스X", 
       "上場初期特有の高いボラティリティ、今後のロックアップ解除に伴う需給負担、高い期待が織り込まれたバリュエーション、巨額の資本需要とスターシップ開発・認証リスク、収益性の安定化という課題がリスクです。"),
      ("우주 경제의 핵심 기업이 공개 시장에 진입해 이제 직접 투자가 가능해졌습니다. 다만 상장 직후에는 가격 변동성과 락업 일정이 크게 작용하므로, 분할 매수와 실적·가이던스 확인을 병행하는 신중한 접근이 바람직합니다.",
       "宇宙経済の中核企業が公開市場に登場し、これにより直接投資が可能になりました。ただし上場直後は価格変動とロックアップの日程が大きく作用するため、分割購入と業績・ガイダンスの確認を併用する慎重なアプローチが望ましいです。"),
-    ])
+    ],
+    exch_ja="新規上場 (2026.06.12 IPO)")
 
 add("rdw", "RDW", "space", "NYSE", "레드와이어", "レッドワイヤー", "2026.06.10",
     "우주 인프라 부품과 우주 제조를 다루는 레드와이어(RDW)를 분석합니다.",
@@ -639,7 +646,8 @@ def render_post(t, lang):
     body_html = "\n".join(body_parts)
     exch_lbl = "거래소" if lang == "ko" else "取引所"
     sector_lbl = "섹터" if lang == "ko" else "セクター"
-    meta = f"{exch_lbl}: {t['exch']} · {sector_lbl}: {sector} · {META_BY[lang]}"
+    exch = t["exch"] if lang == "ko" else t["exch_ja"]
+    meta = f"{exch_lbl}: {exch} · {sector_lbl}: {sector} · {META_BY[lang]}"
     h = head(lang, title, desc, f"post-{t['slug']}.html", other_slug)
     hn = header_nav(lang, "stock-analysis.html", other_slug)
     return f"""{h}
