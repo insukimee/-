@@ -1,9 +1,13 @@
+// Product name is English in both languages. Do not translate it to
+// "마켓인사이트" or "US 마켓인사이트" (conflicts with Hankyung's service).
+export const APP_DISPLAY_NAME = 'US Market Insight';
+
 export const STR = {
   ko: {
     tabs: { home: '홈', stocks: '종목', economy: '경제', watchlist: '관심', settings: '설정' },
     disclaimerBar: '투자 권유 아님 · 정보 제공 · 매매 기능 없음',
     offline: '오프라인입니다. 앱에 포함된 분석을 보여 줍니다. 차트와 최신 글 확인은 연결 후 가능합니다.',
-    consentKicker: 'US Market Insight',
+    consentKicker: APP_DISPLAY_NAME,
     consentTitle: '투자 권유가 아닙니다',
     consentLead: '이 앱은 미국 증시와 경제에 대한 분석 글을 읽는 정보 앱입니다.',
     consentBullets: [
@@ -60,7 +64,7 @@ export const STR = {
     tabs: { home: 'ホーム', stocks: '銘柄', economy: '経済', watchlist: '関心', settings: '設定' },
     disclaimerBar: '投資勧誘ではありません · 情報提供 · 取引機能なし',
     offline: 'オフラインです。アプリに同梱した分析を表示しています。チャートと最新記事の確認は接続後にできます。',
-    consentKicker: 'US Market Insight',
+    consentKicker: APP_DISPLAY_NAME,
     consentTitle: '投資勧誘ではありません',
     consentLead: 'このアプリは米国株と経済の分析記事を読むための情報アプリです。',
     consentBullets: [

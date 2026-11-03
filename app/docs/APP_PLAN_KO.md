@@ -2,7 +2,7 @@
 
 확인 날짜: 2026-11-03. 정책 문서는 그날 연 페이지 기준이며, 제출 전에 같은 URL을 다시 열어야 합니다. 열지 못한 항목은 "확인 필요"로 적었습니다.
 
-앱 표시 이름은 **US Market Insight**로 확정입니다. `applicationId`는 확정이 아닙니다.
+앱 표시 이름과 한국어·일본어 스토어 표시명은 **US Market Insight**로 확정입니다(17자, Play 제목 한도 30). "US 마켓인사이트" 등 한글 표기는 앱 이름·스토어 이름에 쓰지 않습니다. 한글 "마켓인사이트" 단독·유사 표기는 한국경제신문 자본시장 서비스와 혼동될 수 있어 사용하지 않습니다. 근거(2026-11-03): [marketinsight.hankyung.com](https://marketinsight.hankyung.com/), App Store 앱 이름 "마켓인사이트"(The Korea Economic Daily, <https://apps.apple.com/kr/app/id802681902>). Google Play의 동일 이름 상세 URL은 이번 검색에서 특정하지 못했습니다. `applicationId`는 확정이 아닙니다.
 
 ## 1. 방식을 고른 이유
 
@@ -199,7 +199,7 @@ adaptive icon은 API 26+에서 원형·스퀴클 마스크에 잘립니다. 막�
 - `generate.py`가 `feed.json`을 루트에 생성
 - 개인정보처리방침·이용약관에 위 앱 문단 추가 (ko/ja)
 - 도메인 루트에 `app-ads.txt`
-- 헤더 로고 문구 "마켓인사이트"와 앱 이름 "US Market Insight"를 맞출지 결정 후, 맞춘다면 사이트 템플릿 수정
+- 공개 웹사이트 원본의 헤더·저작권은 아직 "마켓인사이트"입니다. 앱 번들은 로고, 홈 화면 제목, 저작권 줄만 "US Market Insight"로 바꿉니다. 사이트 원본을 같은 영문으로 바꿀지는 별도 결정이며, 앱 이름을 한글로 맞추지는 않습니다.
 - 선택: 종목 페이지에 `data-ticker` 속성. 지금은 파일명으로 티커를 읽음
 
 ## 11. 위험

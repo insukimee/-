@@ -46,6 +46,28 @@ export function stripWebAds(html) {
   return next;
 }
 
+const APP_DISPLAY_NAME = 'US Market Insight';
+
+function renameAppChrome(html) {
+  return html
+    .replace(
+      /<a href="index\.html" class="logo">[^<]*<\/a>/g,
+      `<a href="index.html" class="logo">${APP_DISPLAY_NAME}</a>`,
+    )
+    .replace(
+      /(<meta name="apple-mobile-web-app-title" content=")[^"]*(")/g,
+      `$1${APP_DISPLAY_NAME}$2`,
+    )
+    .replace(
+      /(<meta property="og:site_name" content=")[^"]*(")/g,
+      `$1${APP_DISPLAY_NAME}$2`,
+    )
+    .replace(/ - 마켓인사이트/g, ` - ${APP_DISPLAY_NAME}`)
+    .replace(/ - マーケットインサイト/g, ` - ${APP_DISPLAY_NAME}`)
+    .replace(/© 2026 마켓인사이트/g, `© 2026 ${APP_DISPLAY_NAME}`)
+    .replace(/© 2026 マーケットインサイト/g, `© 2026 ${APP_DISPLAY_NAME}`);
+}
+
 function injectShell(html) {
   let next = html;
   if (!/viewport-fit=cover/.test(next)) {
@@ -126,7 +148,7 @@ async function main() {
   if (appConfig.stripWebAds !== false) {
     for (const file of walkHtml(path.join(wwwDir, 'ko')).concat(walkHtml(path.join(wwwDir, 'ja')))) {
       const original = fs.readFileSync(file, 'utf8');
-      const stripped = injectShell(stripWebAds(original));
+      const stripped = injectShell(renameAppChrome(stripWebAds(original)));
       if (stripped.includes('adsbygoogle') || stripped.includes('pagead2.googlesyndication.com')) {
         throw new Error(`web ads remain in ${path.relative(wwwDir, file)}`);
       }

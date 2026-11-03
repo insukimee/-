@@ -83,7 +83,7 @@ iPhone 6.9"/6.5" 같은 크기는 Apple 쪽 이름입니다. Play 도움말은 �
 초안 문구: `docs/store-listing/ko.md`, `ja.md`.  
 Play 등록정보에 Apple식 100자 키워드 칸은 이 도움말에서 보이지 않았습니다. 제목·짧은 설명·긴 설명에 넣습니다. 콘솔에 키워드 칸이 있으면 **확인 필요**.
 
-앱 이름 확정값: **US Market Insight** (17자, 한도 30).
+앱 이름 확정값: **US Market Insight** (17자, 한도 30). 한국어 스토어 표시명도 이 영문입니다. "US 마켓인사이트"와 한글 "마켓인사이트" 단독·유사 표기는 쓰지 않습니다. 한국경제신문 자본시장 서비스와 혼동될 수 있습니다. 근거(2026-11-03): <https://marketinsight.hankyung.com/>, App Store <https://apps.apple.com/kr/app/id802681902> (앱 이름 "마켓인사이트", 제공자 The Korea Economic Daily). Google Play의 동일 이름 상세 URL은 이번 검색에서 특정하지 못했습니다.
 
 ## 5. URL
 

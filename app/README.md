@@ -1,6 +1,6 @@
 # US Market Insight (Android)
 
-미국 증시 분석 정적 사이트를 기기에 담고, 관심 종목·공유·AdMob·FCM을 얹은 Capacitor Android 앱입니다. 앱 표시 이름은 **US Market Insight**입니다.
+미국 증시 분석 정적 사이트를 기기에 담고, 관심 종목·공유·AdMob·FCM을 얹은 Capacitor Android 앱입니다. 앱 표시 이름과 한국어·일본어 스토어 표시명은 **US Market Insight**입니다. 한글 "마켓인사이트"는 앱 이름에 쓰지 않습니다.
 
 이 디렉터리는 사이트(`generate.py`, `ko/`, `ja/` 등)와 분리되어 있습니다. 사이트 원본은 빌드할 때 `www/`로 복사만 합니다.
 

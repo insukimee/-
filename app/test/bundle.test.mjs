@@ -31,6 +31,11 @@ test('bundled site has no AdSense and includes the app shell', () => {
   const home = fs.readFileSync(path.join(www, 'ko', 'index.html'), 'utf8');
   assert.match(home, /shell\/app\.js/);
   assert.match(home, /__MI_APP__/);
+  assert.match(home, /class="logo">US Market Insight</);
+  assert.doesNotMatch(home, /class="logo">마켓인사이트</);
+  const jaHome = fs.readFileSync(path.join(www, 'ja', 'index.html'), 'utf8');
+  assert.match(jaHome, /class="logo">US Market Insight</);
+  assert.doesNotMatch(jaHome, /class="logo">マーケットインサイト</);
   const config = JSON.parse(fs.readFileSync(path.join(www, 'shell', 'runtime-config.json'), 'utf8'));
   assert.equal(config.appName, 'US Market Insight');
   assert.equal(config.ads.useTestAds, true);
