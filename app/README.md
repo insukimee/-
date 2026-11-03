@@ -39,14 +39,14 @@ npm run build
 
 `npm run build:www`는 같은 명령입니다.
 
-`app.config.json`의 `siteBaseUrl`이 공유 링크·약관 링크·피드 주소의 기준입니다. 도메인이 `usmarketinsight.com`으로 바뀌면 이 값만 바꾸고 `npm run build:www`를 다시 실행합니다.
+`app.config.json`의 `siteBaseUrl`이 공유 링크·약관 링크·피드 주소의 기준입니다. 도메인이 `usmarketinsight.com`으로 바뀌면 이 값만 바꾸고 `npm run build`를 다시 실행합니다.
 
 ## Android
 
 네이티브 프로젝트는 `android/`에 있고, 서명 파일과 `google-services.json`은 빠져 있습니다. 처음 클론한 뒤:
 
 ```bash
-npm run build:www
+npm run build
 npx cap sync android
 ```
 
