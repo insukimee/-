@@ -8,7 +8,8 @@
     "node": ">=20"
   },
   "scripts": {
-    "build:www": "node scripts/build-www.mjs",
+    "build": "node scripts/build-www.mjs",
+    "build:www": "npm run build",
     "icons": "python3 scripts/gen-icons.py",
     "apply:native": "node scripts/apply-native-extras.mjs",
     "cap:sync": "npm run build:www && npx cap sync android",

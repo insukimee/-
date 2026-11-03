@@ -34,8 +34,10 @@ npm test
 `www/`는 빌드 산출물이라 git에 없습니다. 다시 만들려면:
 
 ```bash
-npm run build:www
+npm run build
 ```
+
+`npm run build:www`는 같은 명령입니다.
 
 `app.config.json`의 `siteBaseUrl`이 공유 링크·약관 링크·피드 주소의 기준입니다. 도메인이 `usmarketinsight.com`으로 바뀌면 이 값만 바꾸고 `npm run build:www`를 다시 실행합니다.
 
@@ -64,7 +66,15 @@ cd android
 ```
 
 산출물: `android/app/build/outputs/apk/debug/app-debug.apk`  
-디버그 인증서로만 서명됩니다. Play에 올리는 파일이 아닙니다.
+디버그 인증서로만 서명됩니다. Play에 올리는 파일이 아닙니다. APK는 git에 넣지 않습니다.
+
+폰에 직접 설치할 때:
+
+1. 위 순서(`npm run build`, `npx cap sync android`, `./gradlew assembleDebug`)로 APK를 만듭니다.
+2. Android 설정에서 이 출처의 앱 설치를 허용합니다.
+3. 파일을 폰으로 옮겨 열거나, USB 디버깅 후 `adb install -r app-debug.apk`를 실행합니다.
+
+이 디버그 APK는 Google 샘플 광고 ID를 쓰고, `google-services.json`이 없어 푸시 토큰이 나오지 않습니다. 알림을 켜면 등록이 실패하고, 글 읽기와 관심 목록은 동작합니다. Play에 올리면 안 됩니다.
 
 서명 없는 릴리스 AAB:
 
