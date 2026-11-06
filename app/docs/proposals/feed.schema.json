@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://usmarketinsight.com/schemas/feed.json",
+  "title": "US Market Insight feed",
+  "description": "Proposed site file. Not generated in this pull request. The app reads siteBaseUrl + feedPath and falls back to a bundled sample.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["generatedAt", "items"],
+  "properties": {
+    "generatedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "ticker", "slug", "lang", "title", "url", "publishedAt"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Stable id. Changing it makes clients treat the row as new."
+          },
+          "ticker": { "type": "string", "examples": ["NVDA", "MOG.A"] },
+          "slug": {
+            "type": "string",
+            "description": "Filename stem after post-. MOG.A is mog-a.",
+            "pattern": "^[a-z0-9-]+$"
+          },
+          "lang": { "enum": ["ko", "ja"] },
+          "title": { "type": "string" },
+          "url": { "type": "string", "format": "uri" },
+          "publishedAt": { "type": "string", "format": "date-time" }
+        }
+      }
+    }
+  }
+}

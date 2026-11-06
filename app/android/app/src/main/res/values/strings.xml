@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <!-- English only. Do not localize to 마켓인사이트. -->
+    <string name="app_name">US Market Insight</string>
+    <string name="title_activity_main">US Market Insight</string>
+    <string name="package_name">com.usmarketinsight.app</string>
+    <string name="custom_url_scheme">com.usmarketinsight.app</string>
+    <string name="admob_app_id">ca-app-pub-3940256099942544~3347511713</string>
+</resources>
+

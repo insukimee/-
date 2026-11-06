@@ -1,0 +1,40 @@
+{
+  "name": "us-market-insight",
+  "version": "1.0.0",
+  "private": true,
+  "description": "US Market Insight Android and iOS app. The bundle id is provisional until confirmed.",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "node scripts/build-www.mjs",
+    "build:www": "npm run build",
+    "icons": "python3 scripts/gen-icons.py",
+    "apply:native": "node scripts/apply-native-extras.mjs",
+    "cap:sync": "npm run build && npx cap sync",
+    "test": "node --test test/pure.test.mjs && node scripts/build-www.mjs && node --test test/bundle.test.mjs",
+    "android:debug": "npm run build:www && npx cap sync android && cd android && ./gradlew assembleDebug --no-daemon",
+    "android:bundle": "npm run build:www && npx cap sync android && cd android && ./gradlew bundleRelease --no-daemon",
+    "screenshots": "node scripts/screenshot.mjs",
+    "check:release": "node scripts/check-release-ready.mjs"
+  },
+  "dependencies": {
+    "@capacitor-community/admob": "8.3.0",
+    "@capacitor/android": "8.6.0",
+    "@capacitor/app": "8.1.2",
+    "@capacitor/core": "8.6.0",
+    "@capacitor/ios": "8.6.0",
+    "@capacitor/network": "8.0.1",
+    "@capacitor/preferences": "8.0.1",
+    "@capacitor/push-notifications": "8.1.3",
+    "@capacitor/share": "8.0.3",
+    "@capacitor/splash-screen": "8.0.2",
+    "@capacitor/status-bar": "8.0.4"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "8.6.0",
+    "esbuild": "0.28.2",
+    "puppeteer-core": "24.23.0"
+  }
+}

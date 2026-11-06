@@ -1,0 +1,64 @@
+# PROPOSAL ONLY.
+# Do not copy this file to .github/workflows until:
+#   1. The owner creates a Firebase project and a least-privilege service account.
+#   2. The JSON key is stored as the GitHub Actions secret FIREBASE_SERVICE_ACCOUNT.
+#   3. FIREBASE_PROJECT_ID is a repository variable.
+#   4. The site publishes feed.json (see feed.schema.json). This repo does not have that file yet.
+# This workflow is not active. Nothing here sends a notification.
+
+name: Propose FCM topic dispatch
+
+on:
+  workflow_dispatch:
+  # After feed.json exists, a push to main that changes feed.json is the intended trigger.
+  # push:
+  #   branches: [main]
+  #   paths: ['feed.json']
+
+jobs:
+  dispatch-topics:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+
+      - name: Send one topic message per new feed row
+        env:
+          PROJECT_ID: ${{ vars.FIREBASE_PROJECT_ID }}
+        run: |
+          set -euo pipefail
+          test -n "$PROJECT_ID"
+          TOKEN="$(gcloud auth print-access-token)"
+          # Replace this example with a diff against the previous feed.json.
+          # Topic payload limit is 2048 bytes. Do not put private data in the body.
+          # On HTTP 429, wait and retry. See Firebase "FCM throttling and quotas".
+          curl --fail-with-body -sS -X POST \
+            -H "Authorization: Bearer ${TOKEN}" \
+            -H "Content-Type: application/json; charset=utf-8" \
+            "https://fcm.googleapis.com/v1/projects/${PROJECT_ID}/messages:send" \
+            -d '{
+              "message": {
+                "topic": "ticker-nvda",
+                "notification": {
+                  "title": "US Market Insight",
+                  "body": "NVDA 분석이 갱신되었습니다. 투자 권유가 아닙니다."
+                },
+                "data": {
+                  "slug": "nvda",
+                  "lang": "ko",
+                  "path": "/ko/post-nvda.html"
+                }
+              }
+            }'
+
+  # A second workflow, or a schedule on this one, can post to digest-ko and digest-ja.
+  # A topic cannot deliver at a different clock time per device.
+  # digest-daily:
+  #   if: github.event_name == 'schedule'
+  #   runs-on: ubuntu-latest

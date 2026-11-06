@@ -1,0 +1,40 @@
+node_modules/
+www/
+*.apk
+*.aab
+.DS_Store
+
+# Android build outputs and machine-local SDK path
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+android/captures/
+android/.idea/
+*.iml
+
+# Signing material. Never commit.
+*.jks
+*.keystore
+android/keystore.properties
+android/app/keystore.properties
+
+# Firebase / Google config that contains project keys. Never commit.
+google-services.json
+GoogleService-Info.plist
+android/app/google-services.json
+ios/**/GoogleService-Info.plist
+*.mobileprovision
+*.provisionprofile
+*.p8
+*.p12
+*.cer
+**/xcuserdata/
+ios/DerivedData/
+ios/App/Pods/
+ios/App/build/
+
+# Env and secrets
+.env
+.env.*
+secrets/
