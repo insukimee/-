@@ -149,10 +149,12 @@ App Privacy(영양성분표)에는 Android Data safety와 같이, 광고 식별�
 
 스토어 문구 초안: `store-listing/ios-ko.md`, `store-listing/ios-ja.md`.
 
-스크린샷(2026-11-03, https://developer.apple.com/help/app-store-connect/reference/app-information/screenshot-specifications/ ):
+iPad 포함이 확정입니다. `TARGETED_DEVICE_FAMILY`는 `1,2`(iPhone+iPad)를 유지합니다. 번들 ID `com.usmarketinsight.app`는 여전히 임시입니다.
 
-- 기기 크기마다 최소 1장, 최대 10장. JPEG 또는 PNG. 알파 채널 없음.
-- 아이폰은 Dynamic Island 중간 화면 스크린샷이 필요합니다. 받은 크기 예: 1179×2556, 1206×2622(세로).
-- 이 프로젝트는 아이패드도 타깃(`TARGETED_DEVICE_FAMILY` 1,2)이라, 도움말은 아이패드 13인치 스크린샷을 요구합니다. 그 픽셀 숫자는 이번 페이지 수신분에서 끝까지 확인하지 못했습니다. **확인 필요.** 아이패드를 빼려면 Xcode에서 기기 패밀리를 iPhone만으로 줄이는 결정이 필요합니다.
+스크린샷과 iPad 레이아웃 체크리스트는 `STORE_CHECKLIST_KO.md` 13절과 같습니다. 규격은 2026-11-18에 연 [Screenshot specifications](https://developer.apple.com/help/app-store-connect/reference/app-information/screenshot-specifications/)입니다.
 
-1024 마케팅 아이콘은 알파가 없어야 합니다. `resources/ios/AppIcon-1024.png`와 앱 아이콘 세트는 색 유형 RGB(알파 없음)로 만들었습니다. 도안은 아직 가안입니다.
+- 기기 크기마다 1장 이상, 최대 10장. `.jpeg`, `.jpg`, `.png`. 알파 채널 없음.
+- iPhone Dynamic Island 중간 화면 예: 세로 1179×2556 또는 1206×2622, 가로는 가로·세로를 바꾼 값.
+- iPad 13인치(앱이 iPad를 지원하면 필수): 세로 **2064×2752** 또는 **2048×2732**, 가로 **2752×2064** 또는 **2732×2048**.
+
+1024 마케팅 아이콘은 알파가 없어야 합니다. `resources/ios/AppIcon-1024.png`는 RGB입니다. iPhone과 iPad 홈 화면 크기는 그 1024 한 장에서 Xcode가 만든다는 안내입니다. 출처: https://developer.apple.com/documentation/xcode/configuring-your-app-icon (2026-11-18). 별도 76pt·83.5pt 파일을 넣지는 않았습니다. 다크·틴트 아이콘은 그 문서에서 선택 사항으로 읽었습니다. 제출 화면이 필수로 막으면 **확인 필요**. 도안은 가안입니다.

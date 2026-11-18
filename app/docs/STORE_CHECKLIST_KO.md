@@ -209,4 +209,17 @@ Please review in Korean or Japanese. The first screen is the disclaimer.
 
 ## 13. iOS
 
-Android와 병행해 TestFlight 시험을 진행합니다. 계정·결제·제출은 사장님이 합니다. 체크리스트와 맥 명령은 `IOS_TESTFLIGHT_KO.md`에 있습니다. 앱 이름·부제는 각 30자입니다(2026-11-03, https://developer.apple.com/app-store/product-page/). 초안 이름은 US Market Insight(17자)입니다.
+Android와 병행해 TestFlight 시험을 진행합니다. 계정·결제·제출은 사장님이 합니다. 맥 명령은 `IOS_TESTFLIGHT_KO.md`입니다. 앱 이름·부제는 각 30자입니다(2026-11-03, https://developer.apple.com/app-store/product-page/). 초안 이름은 US Market Insight(17자)입니다.
+
+**iPad 포함이 확정**입니다. Xcode `TARGETED_DEVICE_FAMILY`는 `1,2`입니다. 번들 ID `com.usmarketinsight.app`는 확정 전 임시 값입니다.
+
+정식 제출용 iPad 13인치 스크린샷. 규격은 2026-11-18에 연 [Screenshot specifications](https://developer.apple.com/help/app-store-connect/reference/app-information/screenshot-specifications/)입니다. 앱이 iPad에서 실행되면 13인치 스크린샷이 필수라고 적혀 있습니다.
+
+- [ ] 장수: 13인치 크기당 최소 1장, 최대 10장. iPhone Dynamic Island 중간 화면도 최소 1장.
+- [ ] 13인치 픽셀: 세로 **2064×2752** 또는 **2048×2732**. 가로 **2752×2064** 또는 **2732×2048**. 앞의 쌍은 iPad Pro(M4·M5)와 iPad Air(M2 이후) 칸, 뒤의 쌍은 같은 13인치 칸의 iPad Pro 6세대 이하로 적혀 있습니다.
+- [ ] 형식: `.jpeg`, `.jpg`, `.png`. 알파 채널·투명 없음.
+- [ ] 시뮬레이터: Xcode → Window → Devices and Simulators에서 **iPad Pro 13-inch (M4)** 또는 **(M5)** 를 고릅니다. 목록 이름은 Xcode 버전에 따라 다를 수 있어, 없으면 13인치로 표시된 iPad Pro를 고릅니다. **확인 필요**(메뉴 철자). 12.9인치 iPad Pro 시뮬레이터는 2048×2732라 같은 13인치 허용 크기입니다.
+- [ ] 찍는 방법: 시뮬레이터 메뉴 File → Save Screen, 또는 터미널 `xcrun simctl io booted screenshot ipad-13.png`. 찍은 뒤 픽셀을 확인합니다. 상태 막대만 있는 캡처가 위 크기와 다르면 그 파일을 그대로 올리지 않습니다.
+- [ ] 가로·세로: Info.plist `UISupportedInterfaceOrientations~ipad`에 세로, 거꾸로 세로, 가로 왼쪽, 가로 오른쪽이 있습니다. 스크린샷은 세로와 가로를 각각 한 장 이상 권합니다. 필수가 둘 다인지는 그 페이지가 “허용 크기”로만 적어서, 한 방향만으로 제출이 되는지는 **확인 필요**.
+- [ ] 분할 화면: `UIRequiresFullScreen`은 넣지 않았습니다. Apple은 이 키로 멀티태스킹을 빼는 방식을 지원 종료로 적고, 크기 변경을 처리하고 키를 빼라고 합니다(2026-11-18, [TN3192](https://developer.apple.com/documentation/technotes/tn3192-migrating-your-app-from-the-deprecated-uirequiresfullscreen-key), [UIRequiresFullScreen](https://developer.apple.com/documentation/bundleresources/information-property-list/uirequiresfullscreen)). 같은 기술 노트는 리사이즈를 지원하려면 모든 방향을 선언하라고 합니다. iPad 네 방향은 이미 선언되어 있습니다. iPadOS 26 이후 창 크기 변경에서 레이아웃이 깨지는지는 시뮬레이터에서 아직 보지 못했습니다. **확인 필요.**
+- [ ] 아이콘: 홈 화면용으로 iPad 전용 76pt·83.5pt 파일을 따로 넣지 않습니다. 1024×1024 한 장으로 iPhone·iPad 변형을 만든다는 안내입니다(2026-11-18, [Configuring your app icon](https://developer.apple.com/documentation/xcode/configuring-your-app-icon)). 자산 카탈로그는 universal 1024 한 칸입니다. App Store 마케팅 아이콘도 1024이며 알파는 없습니다. 다크·틴트 변형은 그 문서에서 추가로 넣을 수 있다고 되어 있고, 제출 필수인지는 **확인 필요**.

@@ -11,6 +11,9 @@
   --mi-ad-h: 56px;
   --mi-safe-top: env(safe-area-inset-top, 0px);
   --mi-safe-bottom: env(safe-area-inset-bottom, 0px);
+  --mi-safe-left: env(safe-area-inset-left, 0px);
+  --mi-safe-right: env(safe-area-inset-right, 0px);
+  --mi-content-max: 720px;
   color-scheme: dark;
 }
 
@@ -47,8 +50,14 @@ body.mi-app .pwa-install-btn {
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  padding: calc(24px + var(--mi-safe-top)) 22px calc(24px + var(--mi-safe-bottom));
+  align-items: center;
+  padding: calc(24px + var(--mi-safe-top)) calc(22px + var(--mi-safe-right)) calc(24px + var(--mi-safe-bottom)) calc(22px + var(--mi-safe-left));
   box-sizing: border-box;
+}
+
+.mi-boot > *,
+.mi-consent > * {
+  width: min(100%, var(--mi-content-max));
 }
 
 .mi-boot {
@@ -149,6 +158,8 @@ body.mi-app .pwa-install-btn {
   right: 0;
   z-index: 1200;
   box-sizing: border-box;
+  padding-left: var(--mi-safe-left);
+  padding-right: var(--mi-safe-right);
 }
 
 .mi-disclaimer {
@@ -251,6 +262,10 @@ body.mi-app.mi-shellpage.mi-is-offline {
 }
 
 .mi-page {
+  box-sizing: border-box;
+  width: min(100%, var(--mi-content-max));
+  margin-left: auto;
+  margin-right: auto;
   padding: 12px 16px 8px;
 }
 
@@ -358,13 +373,19 @@ body.mi-app.mi-shellpage.mi-is-offline {
 }
 
 .mi-updates {
-  margin: 8px 16px 0;
+  box-sizing: border-box;
+  width: min(100% - 32px, var(--mi-content-max));
+  margin: 8px auto 0;
 }
 
 .mi-toast {
   position: fixed;
-  left: 16px;
-  right: 16px;
+  left: calc(16px + var(--mi-safe-left));
+  right: calc(16px + var(--mi-safe-right));
+  width: auto;
+  max-width: var(--mi-content-max);
+  margin-left: auto;
+  margin-right: auto;
   bottom: calc(var(--mi-tab-h) + var(--mi-ad-h) + var(--mi-safe-bottom) + 12px);
   background: #1d1d1d;
   border: 1px solid var(--mi-line);
@@ -372,4 +393,14 @@ body.mi-app.mi-shellpage.mi-is-offline {
   padding: 10px 12px;
   z-index: 1300;
   font-size: 13px;
+}
+
+@media (min-width: 768px) {
+  .mi-consent {
+    justify-content: center;
+  }
+
+  .mi-tabs a {
+    font-size: 12px;
+  }
 }
