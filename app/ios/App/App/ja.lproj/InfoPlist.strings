@@ -1,0 +1,2 @@
+CFBundleDisplayName = "US Market Insight";
+NSUserTrackingUsageDescription = "広告表示のため端末の広告識別子を使います。拒否しても記事は開けます。投資勧誘ではありません。";

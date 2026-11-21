@@ -1,0 +1,24 @@
+{
+  "generatedAt": "2026-11-03T00:00:00Z",
+  "sample": true,
+  "items": [
+    {
+      "id": "sample-2026-11-03-nvda-ko",
+      "ticker": "NVDA",
+      "slug": "nvda",
+      "lang": "ko",
+      "title": "엔비디아 (NVDA) 심층 분석",
+      "url": "https://insukimee.github.io/-/ko/post-nvda.html",
+      "publishedAt": "2026-11-03T00:00:00Z"
+    },
+    {
+      "id": "sample-2026-11-03-nvda-ja",
+      "ticker": "NVDA",
+      "slug": "nvda",
+      "lang": "ja",
+      "title": "エヌビディア (NVDA) 詳細分析",
+      "url": "https://insukimee.github.io/-/ja/post-nvda.html",
+      "publishedAt": "2026-11-03T00:00:00Z"
+    }
+  ]
+}
