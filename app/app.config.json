@@ -1,0 +1,27 @@
+{
+  "appName": "US Market Insight",
+  "appId": "com.usmarketinsight.app",
+  "appIdConfirmed": false,
+  "appIdNote": "1순위 후보. Play에 게시하기 전에는 변경할 수 있다. 한 번 게시되면 applicationId는 바꿀 수 없다.",
+  "version": "1.0.0",
+  "versionCode": 1,
+  "disclaimerVersion": "2026-11-03",
+  "siteBaseUrl": "https://insukimee.github.io/-",
+  "feedPath": "/feed.json",
+  "defaultLanguage": "auto",
+  "stripWebAds": true,
+  "ads": {
+    "provider": "admob",
+    "useTestAds": true,
+    "androidTestAppId": "ca-app-pub-3940256099942544~3347511713",
+    "androidTestBannerAdUnitId": "ca-app-pub-3940256099942544/6300978111",
+    "iosTestAppId": "ca-app-pub-3940256099942544~1458002511",
+    "iosTestBannerAdUnitId": "ca-app-pub-3940256099942544/2934735716",
+    "androidAppId": "REPLACE_WITH_ADMOB_APP_ID",
+    "bannerAdUnitId": "REPLACE_WITH_BANNER_AD_UNIT_ID"
+  },
+  "push": {
+    "tickerTopicPrefix": "ticker-",
+    "digestTopicPrefix": "digest-"
+  }
+}
